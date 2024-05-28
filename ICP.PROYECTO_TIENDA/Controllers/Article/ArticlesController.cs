@@ -47,6 +47,13 @@ namespace Icp.TiendaApi.Controllers.Articles
             return await articleService.GetService();
         }
 
+        //VER ARTÍCULOS POR ID
+        [HttpGet("/verArticulosPorId/{IdArticle:int}")]
+        public async Task<ActionResult<ArticleDTO>> Get(int IdArticle)
+        {
+            return await articleService.GetByIdService(IdArticle);
+        }
+
         //CREAR ARTÍCULO
         [HttpPost("/crearArticulo")]
         public async Task<ActionResult> Post([FromForm] ArticleCreacionDTO articleCreacionDTO)

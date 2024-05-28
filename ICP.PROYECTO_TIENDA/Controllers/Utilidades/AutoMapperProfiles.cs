@@ -16,7 +16,7 @@ namespace Icp.Tienda.Utilidades
             CreateMap<User, UserDTO>();
             CreateMap<User, UserCreacionDTO>().ReverseMap();
 
-            CreateMap<Article, ArticleDTO>();
+            CreateMap<Article, ArticleDTO>().ReverseMap();
             CreateMap<ArticleCreacionDTO, Article>()
                 .ForMember(x => x.Foto, options => options.Ignore());
             CreateMap<ArticlesStockDTO, Article>().ReverseMap();

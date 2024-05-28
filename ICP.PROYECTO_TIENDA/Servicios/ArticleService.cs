@@ -31,6 +31,15 @@ namespace Icp.TiendaApi.Servicios
             return mapper.Map<List<ArticlesStockDTO>>(articles);
         }
 
+        //VER ARTÍCULOS POR ID
+        public async Task<ActionResult<ArticleDTO>> GetByIdService(int IdArticle)
+        {
+            var article = await context.Articles
+                .FirstOrDefaultAsync(x => x.IdArticle == IdArticle);
+
+            return mapper.Map<ArticleDTO>(article);
+        }
+
         //CREAR ARTÍCULO
         public async Task<ActionResult> PostService([FromForm] ArticleCreacionDTO articleCreacionDTO)
         {
@@ -125,7 +134,7 @@ namespace Icp.TiendaApi.Servicios
 
             context.Remove(articleDB);
             await context.SaveChangesAsync();
-            return NoContent();
+            return Ok();
         }
 
     }

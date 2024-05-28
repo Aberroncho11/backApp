@@ -15,7 +15,7 @@ namespace Icp.TiendaApi.Controllers.DTO.Order
         public string Address { get; set; }
         public string Province { get; set; }
         public string Status { get; set; }
-        public ICollection<ItemDTO> Items { get; set; }
+        public List<ItemDTO> Items { get; set; }
 
     }
 }

@@ -5,7 +5,6 @@ namespace Icp.TiendaApi.Controllers.DTO.Article
 {
     public class ArticleDTO
     {
-        public int IdArticle { get; set; }
         public string Description { get; set; }
         public string Maker { get; set; }
         public double Weight { get; set; }
