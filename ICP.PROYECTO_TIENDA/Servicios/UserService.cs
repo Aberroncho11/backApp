@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Icp.TiendaApi.BBDD;
 using Icp.TiendaApi.BBDD.Modelos;
+using Icp.TiendaApi.Controllers.DTO.Article;
 using Icp.TiendaApi.Controllers.DTO.User;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -94,8 +95,23 @@ namespace Icp.TiendaApi.Servicios
             return mapper.Map<List<UserDTO>>(users);
         }
 
+        //VER USUARIOS POR ID
+        public async Task<ActionResult<UserGetPorIdDTO>> GetByIdService(int IdUser)
+        {
+            var usuario = await context.Users
+                .FirstOrDefaultAsync(x => x.IdUser == IdUser);
+
+            if (usuario == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(mapper.Map<UserGetPorIdDTO>(usuario));
+        }
+
+
         // CREAR USUARIOS
-        public async Task<ActionResult> PostService(UserCreacionDTO userCreacionDTO)
+        public async Task<ActionResult> PostService([FromForm] UserCreacionDTO userCreacionDTO)
         {
             var existeNickname = await context.Users.Where(x => x.Nickname == userCreacionDTO.Nickname).ToListAsync();
 
@@ -121,7 +137,7 @@ namespace Icp.TiendaApi.Servicios
         }
 
         // MODIFICAR USUARIOS
-        public async Task<ActionResult> PutService(UserCreacionDTO userCreacionDTO, int IdUser)
+        public async Task<ActionResult> PutService([FromForm] UserCreacionDTO userCreacionDTO, int IdUser)
         {
             var existe = await context.Users.AnyAsync(x => x.IdUser == IdUser);
 

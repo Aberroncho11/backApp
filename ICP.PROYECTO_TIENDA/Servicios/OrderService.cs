@@ -29,7 +29,7 @@ namespace Icp.TiendaApi.Servicios
         }
 
         // CREAR PEDIDO
-        public async Task<ActionResult> PostService(OrderCreacionDTO orderCreacionDTO)
+        public async Task<ActionResult> PostService([FromForm] OrderCreacionDTO orderCreacionDTO)
         {
             string status = "";
 
@@ -42,18 +42,18 @@ namespace Icp.TiendaApi.Servicios
                 return BadRequest("No existe el usuario que quiere crear el pedido");
             }
 
-            if (orderCreacionDTO.ArticleIds == null)
+            if (orderCreacionDTO.Articles == null)
             {
                 return BadRequest("No se puede crear un pedido sin articulos");
             }
 
-            var articleIds = orderCreacionDTO.ArticleIds.Select(x => x.IdArticle).ToList();
+            var articleIds = orderCreacionDTO.Articles.Select(x => x.IdArticle).ToList();
             var articles = await context.Articles
                  .Where(x => articleIds.Contains(x.IdArticle))
                  .Select(x => x.IdArticle)
                  .ToListAsync();
 
-            if (orderCreacionDTO.ArticleIds.Count != articles.Count)
+            if (orderCreacionDTO.Articles.Count != articles.Count)
             {
                 return BadRequest("No existe uno de los artículos enviados");
             }
@@ -69,7 +69,7 @@ namespace Icp.TiendaApi.Servicios
                 Province = orderCreacionDTO.Province
             };
 
-            foreach (var itemDto in orderCreacionDTO.ArticleIds)
+            foreach (var itemDto in orderCreacionDTO.Articles)
             {
                 var orderItem = new Item
                 {

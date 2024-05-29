@@ -42,10 +42,17 @@ namespace Icp.TiendaApi.Controllers.User
             return await userService.GetService();
         }
 
+        //VER USUARIOS POR ID
+        [HttpGet("/verUsuariosPorId/{IdUsuario:int}")]
+        public async Task<ActionResult<UserGetPorIdDTO>> Get(int IdUsuario)
+        {
+            return await userService.GetByIdService(IdUsuario);
+        }
+
         // CREAR USUARIOS
         [HttpPost("/crearUsuarios")]
         //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Administrador")]
-        public async Task<ActionResult> Post(UserCreacionDTO userCreacionDTO)
+        public async Task<ActionResult> Post([FromForm] UserCreacionDTO userCreacionDTO)
         {
             return await userService.PostService(userCreacionDTO);
         }
@@ -53,7 +60,7 @@ namespace Icp.TiendaApi.Controllers.User
         // MODIFICAR USUARIOS
         [HttpPut("/modificarUsuarios/{IdUser:int}")]
         //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Administrador")]
-        public async Task<ActionResult> Put(UserCreacionDTO userCreacionDTO, int IdUser)
+        public async Task<ActionResult> Put([FromForm] UserCreacionDTO userCreacionDTO, int IdUser)
         {
             return await userService.PutService(userCreacionDTO, IdUser);
         }

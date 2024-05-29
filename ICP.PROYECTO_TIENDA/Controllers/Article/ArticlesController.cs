@@ -63,9 +63,9 @@ namespace Icp.TiendaApi.Controllers.Articles
 
         //MODIFICAR ARTÍCULO
         [HttpPut("/modificarArticulo/{IdArticle:int}")]
-        public async Task<ActionResult> Put([FromForm] ArticleCreacionDTO articleCreacionDTO, int IdArticle)
+        public async Task<ActionResult> Put([FromForm] ArticlePutDTO articlePutDTO, int IdArticle)
         {
-            return await articleService.PutService(articleCreacionDTO, IdArticle);
+            return await articleService.PutService(articlePutDTO, IdArticle);
         }
 
         //ELIMINAR ARTÍCULO

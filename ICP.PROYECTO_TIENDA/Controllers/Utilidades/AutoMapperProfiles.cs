@@ -15,11 +15,13 @@ namespace Icp.Tienda.Utilidades
         {
             CreateMap<User, UserDTO>();
             CreateMap<User, UserCreacionDTO>().ReverseMap();
+            CreateMap<User, UserGetPorIdDTO>().ReverseMap();
 
             CreateMap<Article, ArticleDTO>().ReverseMap();
             CreateMap<ArticleCreacionDTO, Article>()
                 .ForMember(x => x.Foto, options => options.Ignore());
             CreateMap<ArticlesStockDTO, Article>().ReverseMap();
+            CreateMap<ArticlePutDTO, Article>().ReverseMap();
 
             CreateMap<Order, OrderDTO>();
             CreateMap<OrderCreacionDTO, Order>()
@@ -37,12 +39,12 @@ namespace Icp.Tienda.Utilidades
         {
             var resultado = new List<Item>();
 
-            if(orderCreacionDTO.ArticleIds == null)
+            if(orderCreacionDTO.Articles == null)
             {
                 return resultado;
             }
 
-            foreach (var article in orderCreacionDTO.ArticleIds)
+            foreach (var article in orderCreacionDTO.Articles)
             {
                 resultado.Add(new Item() { ArticleId = article.IdArticle, Quantity =  article.Quantity});
             }

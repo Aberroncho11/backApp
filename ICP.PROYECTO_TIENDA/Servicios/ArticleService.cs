@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Icp.TiendaApi.BBDD.Modelos;
 using Icp.TiendaApi.Servicios.Almacenador;
+using Icp.TiendaApi.Controllers.DTO.User;
 
 namespace Icp.TiendaApi.Servicios
 {
@@ -37,7 +38,12 @@ namespace Icp.TiendaApi.Servicios
             var article = await context.Articles
                 .FirstOrDefaultAsync(x => x.IdArticle == IdArticle);
 
-            return mapper.Map<ArticleDTO>(article);
+            if (article == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(mapper.Map<ArticleDTO>(article));
         }
 
         //CREAR ARTÍCULO
@@ -77,27 +83,27 @@ namespace Icp.TiendaApi.Servicios
         }
 
         //MODIFICAR ARTÍCULO
-        public async Task<ActionResult> PutService([FromForm] ArticleCreacionDTO articleCreacionDTO, int IdArticle)
+        public async Task<ActionResult> PutService([FromForm] ArticlePutDTO articlePutDTO, int IdArticle)
         {
             var articleDB = await context.Articles.FirstOrDefaultAsync(x => x.IdArticle == IdArticle);
 
             if (articleDB == null) { return NotFound(); }
 
-            articleDB = mapper.Map(articleCreacionDTO, articleDB);
+            articleDB = mapper.Map(articlePutDTO, articleDB);
 
-            if (articleCreacionDTO.Foto != null)
+            if (articlePutDTO.Foto != null)
             {
                 using (var memoryStream = new MemoryStream())
                 {
-                    await articleCreacionDTO.Foto.CopyToAsync(memoryStream);
+                    await articlePutDTO.Foto.CopyToAsync(memoryStream);
 
                     var contenido = memoryStream.ToArray();
 
-                    var extension = Path.GetExtension(articleCreacionDTO.Foto.FileName);
+                    var extension = Path.GetExtension(articlePutDTO.Foto.FileName);
 
                     articleDB.Foto = await almacenadorArchivos.EditarArchivo(contenido, extension, contenedor,
                         articleDB.Foto,
-                        articleCreacionDTO.Foto.ContentType);
+                        articlePutDTO.Foto.ContentType);
                 }
             }
 
