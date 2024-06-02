@@ -92,13 +92,13 @@ namespace Icp.TiendaApi
 
             services.AddAutoMapper(typeof(Startup));
 
-            services.AddScoped<UserService>();
+            services.AddScoped<UsuarioServicio>();
 
-            services.AddScoped<ArticleService>();
+            services.AddScoped<ArticuloServicio>();
 
-            services.AddScoped<OrderService>();
+            services.AddScoped<PedidoServicio>();
 
-            services.AddScoped<StockService>();
+            services.AddScoped<AlmacenServicio>();
 
         }
 

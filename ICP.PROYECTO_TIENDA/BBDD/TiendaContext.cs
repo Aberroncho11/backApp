@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Icp.TiendaApi.BBDD.Modelos;
+using Icp.TiendaApi.BBDD.Entidades;
 namespace Icp.TiendaApi.BBDD
 {
     public partial class TiendaContext : DbContext
@@ -13,194 +13,209 @@ namespace Icp.TiendaApi.BBDD
         {
         }
 
-        public virtual DbSet<Article> Articles { get; set; }
-        public virtual DbSet<Item> Items { get; set; }
-        public virtual DbSet<Order> Orders { get; set; }
-        public virtual DbSet<Profile> Profiles { get; set; }
-        public virtual DbSet<Stock> Stocks { get; set; }
-        public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<Articulo> Articulos { get; set; }
+        public virtual DbSet<Producto> Productos { get; set; }
+        public virtual DbSet<Pedido> Pedidos { get; set; }
+        public virtual DbSet<Perfil> Perfiles { get; set; }
+        public virtual DbSet<Almacen> Almacen { get; set; }
+        public virtual DbSet<Usuario> Usuarios { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Server=ps17;Database=FCT_ABR_10;Trusted_Connection=True;");
+                optionsBuilder.UseSqlServer("Server=Gabriel;Database=ICP_TIENDA;Trusted_Connection=True;");
             }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.UseCollation("SQL_Latin1_General_CP1_CI_AS");
-
-            modelBuilder.Entity<Article>(entity =>
+            modelBuilder.Entity<Almacen>(entity =>
             {
-                entity.HasKey(e => e.IdArticle)
-                    .HasName("PK__ARTICLES__05362DC3CD2EC8D1");
+                entity.HasKey(e => e.IdEstanteria)
+                    .HasName("PK__ALMACEN__C408528E64F9575F");
 
-                entity.ToTable("ARTICLES");
+                entity.ToTable("ALMACEN");
 
-                entity.Property(e => e.IdArticle).HasColumnName("ID_ARTICLE");
+                entity.Property(e => e.IdEstanteria).HasColumnName("ID_ESTANTERIA");
 
-                entity.Property(e => e.Description)
-                    .HasMaxLength(150)
-                    .HasColumnName("DESCRIPTION");
+                entity.Property(e => e.ArticuloAlmacen).HasColumnName("ARTICULO_ALMACEN");
 
-                entity.Property(e => e.Maker)
-                    .HasMaxLength(20)
-                    .HasColumnName("MAKER");
+                entity.Property(e => e.Cantidad).HasColumnName("CANTIDAD");
 
-                entity.Property(e => e.Weight).HasColumnName("WEIGHT");
+                entity.HasOne(d => d.ArticuloAlmacenNavigation)
+                    .WithMany(p => p.Almacen)
+                    .HasForeignKey(d => d.ArticuloAlmacen)
+                    .HasConstraintName("FK__ALMACEN__ARTICUL__7E02B4CC");
+            });
 
-                entity.Property(e => e.Height).HasColumnName("HEIGHT");
+            modelBuilder.Entity<Articulo>(entity =>
+            {
+                entity.HasKey(e => e.IdArticulo)
+                    .HasName("PK__ARTICULO__41ADBDE51890E449");
 
-                entity.Property(e => e.Width).HasColumnName("WIDTH");
+                entity.ToTable("ARTICULOS");
 
-                entity.Property(e => e.Price).HasColumnName("PRICE");
+                entity.Property(e => e.IdArticulo).HasColumnName("ID_ARTICULO");
 
-                entity.Property(e => e.Status)
+                entity.Property(e => e.Altura).HasColumnName("ALTURA");
+
+                entity.Property(e => e.Ancho).HasColumnName("ANCHO");
+
+                entity.Property(e => e.Descripcion)
+                    .IsRequired()
                     .HasMaxLength(50)
-                    .HasColumnName("STATUS")
-                    .HasDefaultValueSql("('DISPONIBLE')");
+                    .HasColumnName("DESCRIPCION");
 
-                entity.Property(e => e.Foto)
-                     .HasMaxLength(100)
-                     .HasColumnName("FOTO");
+                entity.Property(e => e.EstadoArticulo)
+                    .IsRequired()
+                    .HasColumnName("ESTADO_ARTICULO");
 
-            });
-
-            modelBuilder.Entity<Item>(entity =>
-            {
-                entity.HasKey(e => new { e.OrderId, e.ArticleId })
-                    .HasName("PK__ITEMS__10D46BA7F20CA215");
-
-                entity.ToTable("ITEMS");
-
-                entity.Property(e => e.OrderId).HasColumnName("ORDER_ID");
-
-                entity.Property(e => e.ArticleId).HasColumnName("ARTICLE_ID");
-
-                entity.Property(e => e.Quantity).HasColumnName("QUANTITY");
-
-                entity.HasOne(d => d.Article)
-                    .WithMany(p => p.Items)
-                    .HasForeignKey(d => d.ArticleId)
-                    .HasConstraintName("FK__ITEMS__ARTICLE_I__04A590BA");
-
-                entity.HasOne(d => d.Order)
-                    .WithMany(p => p.Items)
-                    .HasForeignKey(d => d.OrderId)
-                    .HasConstraintName("FK__ITEMS__ORDER_ID__03B16C81");
-            });
-
-            modelBuilder.Entity<Order>(entity =>
-            {
-                entity.HasKey(e => e.IdOrder)
-                    .HasName("PK__ORDERS__D23A85657563F656");
-
-                entity.ToTable("ORDERS");
-
-                entity.Property(e => e.IdOrder).HasColumnName("ID_ORDER");
-
-                entity.Property(e => e.IdUser).HasColumnName("ID_USER");
-
-                entity.Property(e => e.PostalCode).HasColumnName("POSTAL_CODE");
-
-                entity.Property(e => e.Town)
-                     .HasMaxLength(20)
-                     .HasColumnName("TOWN");
-
-                entity.Property(e => e.PhoneNumber).HasColumnName("PHONE_NUMBER");
-
-                entity.Property(e => e.PersonalContact)
-                  .HasMaxLength(20)
-                  .HasColumnName("PERSONAL_CONTACT");
-
-                entity.Property(e => e.Address)
-                   .HasMaxLength(40)
-                   .HasColumnName("ADDRESS");
-
-                entity.Property(e => e.Province)
+                entity.Property(e => e.Fabricante)
+                    .IsRequired()
                     .HasMaxLength(20)
-                    .HasColumnName("PROVINCE");
+                    .HasColumnName("FABRICANTE");
 
-                entity.Property(e => e.Status)
-                    .HasMaxLength(50)
-                    .HasColumnName("STATUS")
-                    .HasDefaultValueSql("('LISTO PARA ENVIAR')");
+                entity.Property(e => e.Foto).HasColumnName("FOTO");
 
-                entity.HasOne(d => d.User)
-                    .WithMany(p => p.Orders)
-                    .HasForeignKey(d => d.IdUser)
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .HasConstraintName("FK__ORDERS__ID_USER__7C104AB9");
+                entity.Property(e => e.Peso).HasColumnName("PESO");
+
+                entity.Property(e => e.Precio).HasColumnName("PRECIO");
             });
 
-            modelBuilder.Entity<Profile>(entity =>
+            modelBuilder.Entity<Pedido>(entity =>
             {
-                entity.HasKey(e => e.IdProfile)
-                    .HasName("PK__PROFILES__0DB303E0877480A7");
+                entity.HasKey(e => e.IdPedido)
+                    .HasName("PK__PEDIDOS__A05C2F2A45C4D190");
 
-                entity.ToTable("PROFILES");
+                entity.ToTable("PEDIDOS");
 
-                entity.Property(e => e.IdProfile).HasColumnName("ID_PROFILE");
+                entity.Property(e => e.IdPedido).HasColumnName("ID_PEDIDO");
 
-                entity.Property(e => e.Type).HasColumnName("TYPE");
+                entity.Property(e => e.Ciudad)
+                    .IsRequired()
+                    .HasMaxLength(30)
+                    .IsUnicode(false)
+                    .HasColumnName("CIUDAD");
+
+                entity.Property(e => e.CodigoPostal)
+                    .IsRequired()
+                    .HasMaxLength(5)
+                    .HasColumnName("CODIGO_POSTAL");
+
+                entity.Property(e => e.Contacto)
+                    .IsRequired()
+                    .HasMaxLength(15)
+                    .IsUnicode(false)
+                    .HasColumnName("CONTACTO");
+
+                entity.Property(e => e.Direccion)
+                    .IsRequired()
+                    .HasMaxLength(30)
+                    .IsUnicode(false)
+                    .HasColumnName("DIRECCION");
+
+                entity.Property(e => e.EstadoPedido)
+                    .IsRequired()
+                    .HasColumnName("ESTADO_PEDIDO");
+
+                entity.Property(e => e.Provincia)
+                    .IsRequired()
+                    .HasMaxLength(15)
+                    .IsUnicode(false)
+                    .HasColumnName("PROVINCIA");
+
+                entity.Property(e => e.Telefono)
+                    .IsRequired()
+                    .HasMaxLength(12)
+                    .HasColumnName("TELEFONO");
+
+                entity.Property(e => e.UsuarioId).HasColumnName("USUARIO_ID");
+
+                entity.HasOne(d => d.Usuario)
+                    .WithMany(p => p.Pedidos)
+                    .HasForeignKey(d => d.UsuarioId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__PEDIDOS__USUARIO__681373AD");
             });
 
-            modelBuilder.Entity<Stock>(entity =>
+            modelBuilder.Entity<Perfil>(entity =>
             {
-                entity.HasKey(e => e.IdShelf)
-                    .HasName("PK__STOCK__E3F9DB5538C43B33");
+                entity.HasKey(e => e.IdPerfil)
+                    .HasName("PK__PERFILES__90BDE8092F31C242");
 
-                entity.ToTable("STOCK");
+                entity.ToTable("PERFILES");
 
-                entity.Property(e => e.IdShelf).HasColumnName("ID_SHELF");
+                entity.Property(e => e.IdPerfil).HasColumnName("ID_PERFIL");
 
-                entity.Property(e => e.Amount).HasColumnName("AMOUNT");
-
-                entity.Property(e => e.IdArticle).HasColumnName("ID_ARTICLE");
-
-                entity.HasOne(d => d.Article)
-                    .WithMany(p => p.Stocks)
-                    .HasForeignKey(d => d.IdArticle)
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .HasConstraintName("FK__STOCK__ID_ARTICL__0781FD65");
+                entity.Property(e => e.Tipo)
+                    .IsRequired()
+                    .HasColumnName("TIPO");
             });
 
-            modelBuilder.Entity<User>(entity =>
+            modelBuilder.Entity<Producto>(entity =>
             {
-                entity.HasKey(e => e.IdUser)
-                    .HasName("PK__USERS__95F484405E9E5FF9");
+                entity.HasKey(e => new { e.PedidoId, e.ArticuloId })
+                    .HasName("PK__PRODUCTO__C892A37005F53F3A");
 
-                entity.ToTable("USERS");
+                entity.ToTable("PRODUCTOS");
 
-                entity.HasIndex(e => e.Email, "UQ__USERS__161CF7248AC2806E")
+                entity.Property(e => e.PedidoId).HasColumnName("PEDIDO_ID");
+
+                entity.Property(e => e.ArticuloId).HasColumnName("ARTICULO_ID");
+
+                entity.Property(e => e.Cantidad).HasColumnName("CANTIDAD");
+
+                entity.HasOne(d => d.Articulo)
+                    .WithMany(p => p.Productos)
+                    .HasForeignKey(d => d.ArticuloId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__PRODUCTOS__ARTIC__7849DB76");
+
+                entity.HasOne(d => d.Pedido)
+                    .WithMany(p => p.Productos)
+                    .HasForeignKey(d => d.PedidoId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__PRODUCTOS__PEDID__7755B73D");
+            });
+
+            modelBuilder.Entity<Usuario>(entity =>
+            {
+                entity.HasKey(e => e.IdUsuario)
+                    .HasName("PK__USUARIOS__91136B90D469B8B0");
+
+                entity.ToTable("USUARIOS");
+
+                entity.HasIndex(e => e.Email, "UQ__USUARIOS__161CF724DAE4B14C")
                     .IsUnique();
 
-                entity.HasIndex(e => e.Nickname, "UQ__USERS__AFFD7B7FFCD3F293")
+                entity.HasIndex(e => e.Nickname, "UQ__USUARIOS__AFFD7B7FD728C7ED")
                     .IsUnique();
 
-                entity.Property(e => e.IdUser).HasColumnName("ID_USER");
-
-                entity.Property(e => e.IdProfile).HasColumnName("ID_PROFILE");
-
-                entity.Property(e => e.Password)
-                    .HasMaxLength(20)
-                    .HasColumnName("PASSWORD");
+                entity.Property(e => e.IdUsuario).HasColumnName("ID_USUARIO");
 
                 entity.Property(e => e.Email)
+                    .IsRequired()
                     .HasMaxLength(30)
                     .HasColumnName("EMAIL");
 
                 entity.Property(e => e.Nickname)
+                    .IsRequired()
                     .HasMaxLength(20)
                     .HasColumnName("NICKNAME");
 
-                entity.HasOne(d => d.Profile)
-                    .WithMany(p => p.Users)
-                    .HasForeignKey(d => d.IdProfile)
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .HasConstraintName("FK__USERS__ID_PROFIL__6DC22B62");
+                entity.Property(e => e.Password)
+                    .IsRequired()
+                    .HasMaxLength(20)
+                    .HasColumnName("PASSWORD");
+
+                entity.Property(e => e.Perfil).HasColumnName("PERFIL");
+
+                entity.HasOne(d => d.PerfilNavigation)
+                    .WithMany(p => p.Usuarios)
+                    .HasForeignKey(d => d.Perfil)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__USUARIOS__PERFIL__6166761E");
             });
 
             OnModelCreatingPartial(modelBuilder);

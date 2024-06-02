@@ -1,11 +1,11 @@
-﻿using AutoMapper;
-using Icp.TiendaApi.BBDD.Modelos;
-using Icp.TiendaApi.Controllers.DTO.Article;
-using Icp.TiendaApi.Controllers.DTO.Item;
-using Icp.TiendaApi.Controllers.DTO.Order;
-using Icp.TiendaApi.Controllers.DTO.Stock;
-using Icp.TiendaApi.Controllers.DTO.User;
+﻿using Icp.TiendaApi.BBDD.Entidades;
+using Icp.TiendaApi.Controllers.DTO.Articulo;
+using Icp.TiendaApi.Controllers.DTO.Producto;
+using Icp.TiendaApi.Controllers.DTO.Pedido;
+using Icp.TiendaApi.Controllers.DTO.Almacen;
+using Icp.TiendaApi.Controllers.DTO.Usuario;
 using Profile = AutoMapper.Profile;
+using Icp.TiendaApi;
 
 namespace Icp.Tienda.Utilidades
 {
@@ -13,40 +13,40 @@ namespace Icp.Tienda.Utilidades
     {
         public AutoMapperProfiles()
         {
-            CreateMap<User, UserDTO>();
-            CreateMap<User, UserCreacionDTO>().ReverseMap();
-            CreateMap<User, UserGetPorIdDTO>().ReverseMap();
+            CreateMap<Usuario, UsuarioDTO>();
+            CreateMap<Usuario, UsuarioPostDTO>().ReverseMap();
+            CreateMap<Usuario, UsuarioGetPorIdDTO>().ReverseMap();
 
-            CreateMap<Article, ArticleDTO>().ReverseMap();
-            CreateMap<ArticleCreacionDTO, Article>()
+            CreateMap<Articulo, ArticuloDTO>().ReverseMap();
+            CreateMap<ArticuloPostDTO, Articulo>()
                 .ForMember(x => x.Foto, options => options.Ignore());
-            CreateMap<ArticlesStockDTO, Article>().ReverseMap();
-            CreateMap<ArticlePutDTO, Article>().ReverseMap();
+            CreateMap<ArticuloAlmacenDTO, Articulo>().ReverseMap();
+            CreateMap<ArticuloPutDTO, Articulo>().ReverseMap();
 
-            CreateMap<Order, OrderDTO>();
-            CreateMap<OrderCreacionDTO, Order>()
-                .ForMember(x => x.Items, opciones => opciones.MapFrom(MapItem));
-            CreateMap<OrderDTO, Order>().ReverseMap();
+            CreateMap<Pedido, PedidoDTO>();
+            CreateMap<PedidoPostDTO, Pedido>()
+                .ForMember(x => x.Productos, opciones => opciones.MapFrom(MapItem));
+            CreateMap<PedidoDTO, Pedido>().ReverseMap();
 
-            CreateMap<Item, ItemDTO>();
+            CreateMap<Producto, ProductoDTO>();
 
-            CreateMap<Stock, StockDTO>();
-            CreateMap<StockCreacionDTO, Stock>();
-            CreateMap<User, UserDTO>().ReverseMap();
+            CreateMap<Almacen, AlmacenDTO>();
+            CreateMap<AlmacenCreacionDTO, Almacen>();
+            CreateMap<Usuario, UsuarioDTO>().ReverseMap();
         }
 
-        private List<Item> MapItem(OrderCreacionDTO orderCreacionDTO, Order order)
+        private List<Producto> MapItem(PedidoPostDTO pedidoPostDTO, Pedido pedido)
         {
-            var resultado = new List<Item>();
+            var resultado = new List<Producto>();
 
-            if(orderCreacionDTO.Articles == null)
+            if(pedidoPostDTO.Articulos == null)
             {
                 return resultado;
             }
 
-            foreach (var article in orderCreacionDTO.Articles)
+            foreach (var article in pedidoPostDTO.Articulos)
             {
-                resultado.Add(new Item() { ArticleId = article.IdArticle, Quantity =  article.Quantity});
+                resultado.Add(new Producto() { ArticuloId = article.ArticuloId, Cantidad =  article.Cantidad });
             }
 
             return resultado;
