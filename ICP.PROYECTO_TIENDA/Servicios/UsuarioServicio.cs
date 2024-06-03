@@ -34,37 +34,41 @@ namespace Icp.TiendaApi.Servicios
 
             var usuarioDTO = mapper.Map<UsuarioDTO>(usuarioDB);
 
-            if (usuarioDB != null)
+            if (usuarioDB == null)
             {
-                return await ConstruirTokenServicio(usuarioDTO);
+                return BadRequest("Login incorrecto");
+            }
+            else if(usuarioDB.EstadoUsuario == "Eliminado"){
+
+                return BadRequest("El usuario con el que se quiere acceder está eliminado");
             }
             else
             {
-                return BadRequest("Login incorrecto");
+                return await ConstruirTokenServicio(usuarioDTO);
             }
         }
 
         // CONSTRUIR TOKEN
-        public async Task<ActionResult<UsuarioRespuestaAutenticacionDTO>> ConstruirTokenServicio(UsuarioDTO userDTO)
+        public async Task<ActionResult<UsuarioRespuestaAutenticacionDTO>> ConstruirTokenServicio(UsuarioDTO usuarioDTO)
         {
             string rol = "";
 
-            if (userDTO.Perfil == 1)
+            if (usuarioDTO.Perfil == 1)
             {
                 rol = "Administrador";
             }
-            else if (userDTO.Perfil == 2)
+            else if (usuarioDTO.Perfil == 2)
             {
                 rol = "Gestor";
             }
-            else if (userDTO.Perfil == 3)
+            else if (usuarioDTO.Perfil == 3)
             {
                 rol = "Operador";
             }
 
             List<Claim> claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Email, userDTO.Email),
+                new Claim(ClaimTypes.Email, usuarioDTO.Email),
                 new Claim(ClaimTypes.Role, rol)
             };
 
@@ -79,18 +83,18 @@ namespace Icp.TiendaApi.Servicios
             var respuestaAutenticacionDTO = new UsuarioRespuestaAutenticacionDTO()
             {
                 Token = new JwtSecurityTokenHandler().WriteToken(securityToken),
-                Expiracion = expiracion,
+                Expiracion = TimeZoneInfo.ConvertTimeFromUtc(expiracion, TimeZoneInfo.Local)
             };
 
             return respuestaAutenticacionDTO;
         }
 
         // CHECK TOKEN
-        public async Task<ActionResult<bool>> CheckToken()
+        public ActionResult<bool> CheckToken()
         {
             var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
 
-            if (token == null)
+            if (string.IsNullOrEmpty(token))
             {
                 return Unauthorized();
             }
@@ -112,7 +116,7 @@ namespace Icp.TiendaApi.Servicios
             }
             catch
             {
-                return Unauthorized(false);
+                return Unauthorized();
             }
         }
 
@@ -159,6 +163,8 @@ namespace Icp.TiendaApi.Servicios
 
             var usuarioDB = mapper.Map<Usuario>(userCreacionDTO);
 
+            usuarioDB.EstadoUsuario = "Disponible";
+
             context.Add(usuarioDB);
 
             await context.SaveChangesAsync();
@@ -188,14 +194,18 @@ namespace Icp.TiendaApi.Servicios
         // ELIMINAR USUARIOS
         public async Task<ActionResult> DeleteServicio(int IdUsuario)
         {
-            var existe = await context.Usuarios.AnyAsync(x => x.IdUsuario == IdUsuario);
+            var usuarioDB = await context.Usuarios.FirstOrDefaultAsync(x => x.IdUsuario == IdUsuario);
 
-            if (!existe)
+            if (usuarioDB == null)
             {
-                return NotFound();
+                return NotFound($"El usuario con el id {IdUsuario} no existe");
+            }
+            if(usuarioDB.EstadoUsuario == "Eliminado")
+            {
+                return BadRequest($"El usuario con el id {IdUsuario} ya está eliminado");
             }
 
-            context.Remove(new Usuario() { IdUsuario = IdUsuario });
+            usuarioDB.EstadoUsuario = "Eliminado";
 
             await context.SaveChangesAsync();
 

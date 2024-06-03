@@ -33,7 +33,7 @@ namespace Icp.TiendaApi.BBDD
             modelBuilder.Entity<Almacen>(entity =>
             {
                 entity.HasKey(e => e.IdEstanteria)
-                    .HasName("PK__ALMACEN__C408528E64F9575F");
+                    .HasName("PK__ALMACEN__C408528E40570081");
 
                 entity.ToTable("ALMACEN");
 
@@ -46,13 +46,13 @@ namespace Icp.TiendaApi.BBDD
                 entity.HasOne(d => d.ArticuloAlmacenNavigation)
                     .WithMany(p => p.Almacen)
                     .HasForeignKey(d => d.ArticuloAlmacen)
-                    .HasConstraintName("FK__ALMACEN__ARTICUL__7E02B4CC");
+                    .HasConstraintName("FK__ALMACEN__ARTICUL__4B380934");
             });
 
             modelBuilder.Entity<Articulo>(entity =>
             {
                 entity.HasKey(e => e.IdArticulo)
-                    .HasName("PK__ARTICULO__41ADBDE51890E449");
+                    .HasName("PK__ARTICULO__41ADBDE5CB27BDBE");
 
                 entity.ToTable("ARTICULOS");
 
@@ -86,7 +86,7 @@ namespace Icp.TiendaApi.BBDD
             modelBuilder.Entity<Pedido>(entity =>
             {
                 entity.HasKey(e => e.IdPedido)
-                    .HasName("PK__PEDIDOS__A05C2F2A45C4D190");
+                    .HasName("PK__PEDIDOS__A05C2F2A69C595EC");
 
                 entity.ToTable("PEDIDOS");
 
@@ -136,13 +136,13 @@ namespace Icp.TiendaApi.BBDD
                     .WithMany(p => p.Pedidos)
                     .HasForeignKey(d => d.UsuarioId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__PEDIDOS__USUARIO__681373AD");
+                    .HasConstraintName("FK__PEDIDOS__USUARIO__42A2C333");
             });
 
             modelBuilder.Entity<Perfil>(entity =>
             {
                 entity.HasKey(e => e.IdPerfil)
-                    .HasName("PK__PERFILES__90BDE8092F31C242");
+                    .HasName("PK__PERFILES__90BDE8098E69BBCE");
 
                 entity.ToTable("PERFILES");
 
@@ -156,7 +156,7 @@ namespace Icp.TiendaApi.BBDD
             modelBuilder.Entity<Producto>(entity =>
             {
                 entity.HasKey(e => new { e.PedidoId, e.ArticuloId })
-                    .HasName("PK__PRODUCTO__C892A37005F53F3A");
+                    .HasName("PK__PRODUCTO__C892A37004892D23");
 
                 entity.ToTable("PRODUCTOS");
 
@@ -170,26 +170,26 @@ namespace Icp.TiendaApi.BBDD
                     .WithMany(p => p.Productos)
                     .HasForeignKey(d => d.ArticuloId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__PRODUCTOS__ARTIC__7849DB76");
+                    .HasConstraintName("FK__PRODUCTOS__ARTIC__4F089A18");
 
                 entity.HasOne(d => d.Pedido)
                     .WithMany(p => p.Productos)
                     .HasForeignKey(d => d.PedidoId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__PRODUCTOS__PEDID__7755B73D");
+                    .HasConstraintName("FK__PRODUCTOS__PEDID__4E1475DF");
             });
 
             modelBuilder.Entity<Usuario>(entity =>
             {
                 entity.HasKey(e => e.IdUsuario)
-                    .HasName("PK__USUARIOS__91136B90D469B8B0");
+                    .HasName("PK__USUARIOS__91136B909224D7DF");
 
                 entity.ToTable("USUARIOS");
 
-                entity.HasIndex(e => e.Email, "UQ__USUARIOS__161CF724DAE4B14C")
+                entity.HasIndex(e => e.Email, "UQ__USUARIOS__161CF724809135E3")
                     .IsUnique();
 
-                entity.HasIndex(e => e.Nickname, "UQ__USUARIOS__AFFD7B7FD728C7ED")
+                entity.HasIndex(e => e.Nickname, "UQ__USUARIOS__AFFD7B7F374C4235")
                     .IsUnique();
 
                 entity.Property(e => e.IdUsuario).HasColumnName("ID_USUARIO");
@@ -198,6 +198,10 @@ namespace Icp.TiendaApi.BBDD
                     .IsRequired()
                     .HasMaxLength(30)
                     .HasColumnName("EMAIL");
+
+                entity.Property(e => e.EstadoUsuario)
+                   .IsRequired()
+                   .HasColumnName("ESTADO_USUARIO");
 
                 entity.Property(e => e.Nickname)
                     .IsRequired()
@@ -215,7 +219,7 @@ namespace Icp.TiendaApi.BBDD
                     .WithMany(p => p.Usuarios)
                     .HasForeignKey(d => d.Perfil)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__USUARIOS__PERFIL__6166761E");
+                    .HasConstraintName("FK__USUARIOS__PERFIL__3BF5C5A4");
             });
 
             OnModelCreatingPartial(modelBuilder);

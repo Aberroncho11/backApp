@@ -26,9 +26,9 @@ namespace Icp.TiendaApi.Controllers.User
         }
 
         [HttpGet("/checkToken")]
-        public async Task<ActionResult<bool>> CheckToken()
+        public ActionResult<bool> CheckToken()
         {
-            return await usuarioServicio.CheckToken();
+            return usuarioServicio.CheckToken();
         }
 
         // VER USUARIOS

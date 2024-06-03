@@ -7,6 +7,7 @@ using Icp.TiendaApi.BBDD.Entidades;
 using Icp.TiendaApi.Servicios.Almacenador;
 using System.Linq.Dynamic.Core;
 using Icp.TiendaApi.Controllers.DTO;
+using Icp.TiendaApi.Controllers.DTO.Pedido;
 
 namespace Icp.TiendaApi.Servicios
 {
@@ -25,31 +26,13 @@ namespace Icp.TiendaApi.Servicios
         }
 
         //VER ARTÍCULOS
-        public async Task<ActionResult<PagedResult<ArticuloAlmacenDTO>>> GetServicio(int pageNumber = 1, int pageSize = 9)
+        public async Task<ActionResult<List<ArticuloAlmacenDTO>>> GetServicio()
         {
-            var query = context.Articulos
-                .Include(x => x.Almacen);
+            var articulosDB = await context.Articulos
+                .Include(x => x.Almacen).ToListAsync();
 
-            var totalItems = await query.CountAsync();
-            var articulosDB = await query.Skip((pageNumber - 1) * pageSize)
-                                         .Take(pageSize)
-                                         .ToListAsync();
-
-            var articulosDTO = mapper.Map<List<ArticuloAlmacenDTO>>(articulosDB);
-
-            var result = new PaginacionDTO<ArticuloAlmacenDTO>
-            {
-                Items = articulosDTO,
-                TotalItems = totalItems,
-                PageNumber = pageNumber,
-                PageSize = pageSize
-            };
-
-            return Ok(result);
+            return mapper.Map<List<ArticuloAlmacenDTO>>(articulosDB);
         }
-
-
-
         //VER ARTÍCULOS POR ID
         public async Task<ActionResult<ArticuloDTO>> GetByIdServicio(int IdArticulo)
         {
@@ -74,19 +57,14 @@ namespace Icp.TiendaApi.Servicios
                 using (var memoryStream = new MemoryStream())
                 {
                     await articuloPostDTO.Foto.CopyToAsync(memoryStream);
-
                     var contenido = memoryStream.ToArray();
-
                     var extension = Path.GetExtension(articuloPostDTO.Foto.FileName);
-
-                    articuloDB.Foto = await almacenadorArchivos.GuardarArchivo(contenido, extension, contenedor,
-                        articuloPostDTO.Foto.ContentType);
+                    articuloDB.Foto = await almacenadorArchivos.GuardarArchivo(contenido, extension, contenedor, articuloPostDTO.Foto.ContentType);
                 }
             }
+
             articuloDB.EstadoArticulo = "Disponible";
-
             context.Add(articuloDB);
-
             await context.SaveChangesAsync();
 
             var almacenDB = new Almacen
@@ -95,11 +73,11 @@ namespace Icp.TiendaApi.Servicios
             };
 
             context.Add(almacenDB);
-
             await context.SaveChangesAsync();
 
             return Ok();
         }
+
 
         //MODIFICAR ARTÍCULO
         public async Task<ActionResult> PutServicio([FromForm] ArticuloPutDTO articlePutDTO, int IdArticulo)
@@ -125,11 +103,16 @@ namespace Icp.TiendaApi.Servicios
                         articlePutDTO.Foto.ContentType);
                 }
             }
+            else
+            {
+                articuloDB.Foto = null;
+            }
 
             await context.SaveChangesAsync();
 
             return Ok();
         }
+
 
         //ELIMINAR ARTÍCULO
         public async Task<ActionResult> DeleteServicio(int IdArticulo)

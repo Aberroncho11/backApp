@@ -7,6 +7,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Icp.TiendaApi.Servicios.Almacenador;
 using Icp.TiendaApi.Controllers;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Icp.TiendaApi
 {
@@ -49,7 +51,7 @@ namespace Icp.TiendaApi
             services.AddDbContext<TiendaContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("defaultConnection")));
 
-            services.AddAuthentication()
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(opciones => opciones.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = false,
@@ -59,6 +61,14 @@ namespace Icp.TiendaApi
                         Encoding.UTF8.GetBytes(Configuration["llavejwt"])),
                     ClockSkew = TimeSpan.Zero
                 });
+
+            services.AddAuthorization(options =>
+            {
+                options.DefaultPolicy = new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
+                    .Build();
+            });
 
             services.AddSwaggerGen(c =>
             {

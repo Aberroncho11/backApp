@@ -20,7 +20,7 @@ namespace Icp.TiendaApi.Controllers.Articulo
 
         //VER ARTÍCULOS
         [HttpGet("/verArticulos")]
-        public async Task<ActionResult<PagedResult<ArticuloAlmacenDTO>>> Get()
+        public async Task<ActionResult<List<ArticuloAlmacenDTO>>> GetServicio()
         {
             return await articuloServicio.GetServicio();
         }
