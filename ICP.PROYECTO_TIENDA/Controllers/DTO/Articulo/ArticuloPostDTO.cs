@@ -19,7 +19,7 @@ namespace Icp.TiendaApi.Controllers.DTO.Articulo
         public double Ancho { get; set; }
         [Required(ErrorMessage = "Precio requerido")]
         public double Precio { get; set; }
-        //[FiltroTipoArchivoImagen(grupoTipoArchivo: FiltroGrupoTipoArchivo.Imagen)]
+        [FiltroTipoArchivoImagen(grupoTipoArchivo: FiltroGrupoTipoArchivo.Imagen)]
         public IFormFile Foto { get; set; }
     }
 }
