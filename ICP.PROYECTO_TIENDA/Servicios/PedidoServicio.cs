@@ -95,7 +95,6 @@ namespace Icp.TiendaApi.Servicios
                 if (productoDTO.Cantidad > estanteriaDB.Cantidad)
                 {
                     estado = "Pendiente de stock";
-                    break;
                 }
                 else if(productoDTO.Cantidad > estanteriaDB.Cantidad && articuloDB.EstadoArticulo == "Pendiente de eliminar")
                 {

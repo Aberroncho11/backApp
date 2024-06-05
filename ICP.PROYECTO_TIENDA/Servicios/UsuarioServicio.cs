@@ -68,7 +68,6 @@ namespace Icp.TiendaApi.Servicios
 
             List<Claim> claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Email, usuarioDTO.Email),
                 new Claim(ClaimTypes.Role, rol)
             };
 
