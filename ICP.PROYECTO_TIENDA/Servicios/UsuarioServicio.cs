@@ -145,6 +145,11 @@ namespace Icp.TiendaApi.Servicios
 
 
         // CREAR USUARIOS
+        /// <summary>
+        /// ESto es la vaina loca
+        /// </summary>
+        /// <param name="userCreacionDTO"></param>
+        /// <returns></returns>
         public async Task<ActionResult> PostServicio([FromForm] UsuarioPostDTO userCreacionDTO)
         {
             var existeNickname = await context.Usuarios.Where(x => x.Nickname == userCreacionDTO.Nickname).ToListAsync();

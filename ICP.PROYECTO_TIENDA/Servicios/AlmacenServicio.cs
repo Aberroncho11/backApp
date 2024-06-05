@@ -101,7 +101,7 @@ namespace Icp.TiendaApi.Servicios
 
                 if (todosLosArticulosDisponibles)
                 {
-                    pedido.EstadoPedido = "Enviado";
+                    pedido.EstadoPedido = "Listo para enviar";
 
                     foreach (var producto in pedido.Productos)
                     {
