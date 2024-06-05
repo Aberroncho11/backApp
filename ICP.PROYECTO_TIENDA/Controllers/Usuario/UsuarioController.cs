@@ -25,12 +25,6 @@ namespace Icp.TiendaApi.Controllers.User
             return await usuarioServicio.LoginServicio(usuarioCredencialesDTO);
         }
 
-        [HttpGet("/checkToken")]
-        public ActionResult<bool> CheckToken()
-        {
-            return usuarioServicio.CheckToken();
-        }
-
         // VER USUARIOS
         [HttpGet("/verUsuarios")]
         //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Administrador")]
