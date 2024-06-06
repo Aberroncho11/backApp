@@ -84,6 +84,10 @@ namespace Icp.TiendaApi.Servicios
         {
             var articuloDB = await context.Articulos.FirstOrDefaultAsync(x => x.IdArticulo == IdArticulo);
 
+            var articuloDBFoto = mapper.Map<ArticuloDTO>(articlePutDTO);
+
+            string foto = articuloDBFoto.Foto;
+
             if (articuloDB == null) { return NotFound(); }
 
             articuloDB = mapper.Map(articlePutDTO, articuloDB);
@@ -98,15 +102,34 @@ namespace Icp.TiendaApi.Servicios
 
                     var extension = Path.GetExtension(articlePutDTO.Foto.FileName);
 
-                    articuloDB.Foto = await almacenadorArchivos.EditarArchivo(contenido, extension, contenedor,
-                        articuloDB.Foto,
-                        articlePutDTO.Foto.ContentType);
+                    await almacenadorArchivos.BorrarAchivo($"./wwwroot/Imagenes/{foto}", contenedor);
+
+                    articuloDB.Foto = await almacenadorArchivos.GuardarArchivo(contenido, extension, contenedor, articlePutDTO.Foto.ContentType);
                 }
             }
             else
             {
                 articuloDB.Foto = null;
             }
+
+            await context.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        //BORRAR FOTO
+        public async Task<ActionResult> DeleteFotoServicio(int IdArticulo)
+        {
+            var articuloDB = await context.Articulos.FirstOrDefaultAsync(x => x.IdArticulo == IdArticulo);
+
+            if (articuloDB == null)
+            {
+                return NotFound();
+            }
+
+            var articuloDBFoto = mapper.Map<ArticuloDTO>(articuloDB);
+
+            await almacenadorArchivos.BorrarAchivo($"./wwwroot/Imagenes/{articuloDBFoto.Foto}", contenedor);
 
             await context.SaveChangesAsync();
 

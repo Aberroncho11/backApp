@@ -7,13 +7,19 @@ using System.Reflection;
 
 namespace Icp.TiendaApi.Servicios
 {
+    // Clase que contiene los métodos de los servicios de la estantería
     public class AlmacenServicio : ControllerBase
     {
+        // Contexto de la base de datos
         private readonly TiendaContext context;
+
+        // Mapeador
         private readonly IMapper mapper;
 
+        // Constructor
         public AlmacenServicio(TiendaContext context, IMapper mapper)
         {
+            // Inicialización del contexto y del mapeador
             this.context = context;
             this.mapper = mapper;
         }
@@ -25,6 +31,11 @@ namespace Icp.TiendaApi.Servicios
         //    return mapper.Map<List<StockDTO>>(shelfs);
         //}
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="IdEstanteria"></param>
+        /// <returns></returns>
         public async Task<ActionResult> GetByIdServicio(int IdEstanteria)
         {
             var estanteriaDB = await context.Almacen

@@ -132,6 +132,30 @@ namespace Icp.TiendaApi.Servicios
             return respuestaAutenticacionDTO;
         }
 
+        public async Task<ActionResult<bool>> CheckEmailService(string Email)
+        {
+            var userDB = await context.Usuarios.FirstOrDefaultAsync(x => x.Email == Email);
+
+            if (userDB != null)
+            {
+                return Ok(true);
+            }
+
+            return Ok(false);
+        }
+
+        public async Task<ActionResult<bool>> CheckNicknameService(string Nickname)
+        {
+            var userDB = await context.Usuarios.FirstOrDefaultAsync(x => x.Nickname == Nickname);
+
+            if (userDB != null)
+            {
+                return Ok(true);
+            }
+
+            return Ok(false);
+        }
+
 
         /// <summary>
         /// Obtiene todos los usuarios.
