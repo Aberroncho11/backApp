@@ -25,11 +25,18 @@ namespace Icp.TiendaApi.Controllers.User
             return await usuarioServicio.LoginServicio(usuarioCredencialesDTO);
         }
 
-        [HttpGet("/checkToken")]
-        public ActionResult<bool> CheckToken()
+        [HttpGet("/checkEmail/{Email}")]
+        public async Task<ActionResult<bool>> CheckEmail(string Email)
         {
-            return usuarioServicio.CheckToken();
+            return await usuarioServicio.CheckEmailService(Email);
         }
+
+        [HttpGet("/checkNickname/{Nickname}")]
+        public async Task<ActionResult<bool>> CheckNickname(string Nickname)
+        {
+            return await usuarioServicio.CheckNicknameService(Nickname);
+        }
+
 
         // VER USUARIOS
         [HttpGet("/verUsuarios")]
