@@ -8,6 +8,7 @@ using Icp.TiendaApi.Servicios.Almacenador;
 using System.Linq.Dynamic.Core;
 using Icp.TiendaApi.Controllers.DTO;
 using Icp.TiendaApi.Controllers.DTO.Pedido;
+using System;
 
 namespace Icp.TiendaApi.Servicios
 {
@@ -25,15 +26,28 @@ namespace Icp.TiendaApi.Servicios
             this.almacenadorArchivos = almacenadorArchivos;
         }
 
-        //VER ARTÍCULOS
+        /// <summary>
+        /// Obtiene la lista de artículos almacenados.
+        /// </summary>
+        /// <returns>La lista de artículos almacenados.</returns>
         public async Task<ActionResult<List<ArticuloAlmacenDTO>>> GetServicio()
         {
             var articulosDB = await context.Articulos
                 .Include(x => x.Almacen).ToListAsync();
+            
+            if(!articulosDB.Any())
+            {
+                return NotFound(new { message = "No hay artículos" });
+            }
 
             return mapper.Map<List<ArticuloAlmacenDTO>>(articulosDB);
         }
-        //VER ARTÍCULOS POR ID
+
+        /// <summary>
+        /// Obtiene un artículo por su id.
+        /// </summary>
+        /// <param name="IdArticulo"></param>
+        /// <returns>Los datos del artículo con el id recibido.</returns>
         public async Task<ActionResult<ArticuloDTO>> GetByIdServicio(int IdArticulo)
         {
             var articuloDB = await context.Articulos
@@ -41,13 +55,17 @@ namespace Icp.TiendaApi.Servicios
 
             if (articuloDB == null)
             {
-                return NotFound();
+                return NotFound(new { message = $"No existe ningún artículo con el id {IdArticulo}" });
             }
 
             return Ok(mapper.Map<ArticuloDTO>(articuloDB));
         }
 
-        //CREAR ARTÍCULO
+        /// <summary>
+        /// Obtiene los artículos que coincidan con los filtros recibidos.
+        /// </summary>
+        /// <param name="articuloPostDTO"></param>
+        /// <returns></returns>
         public async Task<ActionResult> PostServicio([FromForm] ArticuloPostDTO articuloPostDTO)
         {
             var articuloDB = mapper.Map<Articulo>(articuloPostDTO);
@@ -57,14 +75,19 @@ namespace Icp.TiendaApi.Servicios
                 using (var memoryStream = new MemoryStream())
                 {
                     await articuloPostDTO.Foto.CopyToAsync(memoryStream);
+
                     var contenido = memoryStream.ToArray();
+
                     var extension = Path.GetExtension(articuloPostDTO.Foto.FileName);
+
                     articuloDB.Foto = await almacenadorArchivos.GuardarArchivo(contenido, extension, contenedor, articuloPostDTO.Foto.ContentType);
                 }
             }
 
             articuloDB.EstadoArticulo = "Disponible";
+
             context.Add(articuloDB);
+
             await context.SaveChangesAsync();
 
             var almacenDB = new Almacen
@@ -73,22 +96,26 @@ namespace Icp.TiendaApi.Servicios
             };
 
             context.Add(almacenDB);
+
             await context.SaveChangesAsync();
 
             return Ok();
         }
 
 
-        //MODIFICAR ARTÍCULO
+        /// <summary>
+        /// Actualiza un artículo existente.
+        /// </summary>
+        /// <param name="articlePutDTO"></param>
+        /// <param name="IdArticulo"></param>
+        /// <returns></returns>
         public async Task<ActionResult> PutServicio([FromForm] ArticuloPutDTO articlePutDTO, int IdArticulo)
         {
             var articuloDB = await context.Articulos.FirstOrDefaultAsync(x => x.IdArticulo == IdArticulo);
 
-            var articuloDBFoto = mapper.Map<ArticuloDTO>(articlePutDTO);
-
-            string foto = articuloDBFoto.Foto;
-
             if (articuloDB == null) { return NotFound(); }
+
+            string foto = articuloDB.Foto;
 
             articuloDB = mapper.Map(articlePutDTO, articuloDB);
 
@@ -102,9 +129,10 @@ namespace Icp.TiendaApi.Servicios
 
                     var extension = Path.GetExtension(articlePutDTO.Foto.FileName);
 
-                    await almacenadorArchivos.BorrarAchivo($"./wwwroot/Imagenes/{foto}", contenedor);
+                    await almacenadorArchivos.BorrarAchivo($"./wwwroot/Imagenes/{Path.GetFileName(foto)}", contenedor);
 
                     articuloDB.Foto = await almacenadorArchivos.GuardarArchivo(contenido, extension, contenedor, articlePutDTO.Foto.ContentType);
+
                 }
             }
             else
@@ -117,27 +145,11 @@ namespace Icp.TiendaApi.Servicios
             return Ok();
         }
 
-        //BORRAR FOTO
-        public async Task<ActionResult> DeleteFotoServicio(int IdArticulo)
-        {
-            var articuloDB = await context.Articulos.FirstOrDefaultAsync(x => x.IdArticulo == IdArticulo);
-
-            if (articuloDB == null)
-            {
-                return NotFound();
-            }
-
-            var articuloDBFoto = mapper.Map<ArticuloDTO>(articuloDB);
-
-            await almacenadorArchivos.BorrarAchivo($"./wwwroot/Imagenes/{articuloDBFoto.Foto}", contenedor);
-
-            await context.SaveChangesAsync();
-
-            return Ok();
-        }
-
-
-        //ELIMINAR ARTÍCULO
+        /// <summary>
+        /// Elimina un artículo existente.
+        /// </summary>
+        /// <param name="IdArticulo"></param>
+        /// <returns></returns>
         public async Task<ActionResult> DeleteServicio(int IdArticulo)
         {
 
@@ -168,11 +180,28 @@ namespace Icp.TiendaApi.Servicios
                 }
             }
 
-            articuloDB.EstadoArticulo = "Pendiente de eliminar";
-            
-            await context.SaveChangesAsync(); ;
+            if(articuloDB.EstadoArticulo == "Disponible" && almacenDB.Cantidad == 0)
+            {
+                almacenDB.ArticuloAlmacen = null;
+
+                articuloDB.EstadoArticulo = "Eliminado";
+
+                await context.SaveChangesAsync();
+
+                return Ok();
+            }
+            else if (articuloDB.EstadoArticulo == "Disponible" && almacenDB.Cantidad > 0)
+            {
+                articuloDB.EstadoArticulo = "Pendiente de eliminar";
+
+                await context.SaveChangesAsync();
+
+                return Ok();
+            }
+
             return Ok();
         }
+
 
     }
 }

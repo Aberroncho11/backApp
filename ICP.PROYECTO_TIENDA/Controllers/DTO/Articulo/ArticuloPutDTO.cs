@@ -12,13 +12,13 @@ namespace Icp.TiendaApi.Controllers.DTO.Articulo
         [StringLength(20, ErrorMessage = "La longitud del fabricante debe ser máxima de 20 caracteres")]
         public string Fabricante { get; set; }
         [Required(ErrorMessage = "Peso requerido")]
-        public double Peso { get; set; }
+        public string Peso { get; set; }
         [Required(ErrorMessage = "Altura requerido")]
-        public double Altura { get; set; }
+        public string Altura { get; set; }
         [Required(ErrorMessage = "Ancho requerido")]
-        public double Ancho { get; set; }
+        public string Ancho { get; set; }
         [Required(ErrorMessage = "Precio requerido")]
-        public double Precio { get; set; }
+        public string Precio { get; set; }
         [Required(ErrorMessage = "Estado requerido")]
         [FiltroEstadoArticulo]
         public string EstadoArticulo { get; set; }
