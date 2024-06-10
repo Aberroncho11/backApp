@@ -46,6 +46,7 @@ namespace Icp.TiendaApi.Controllers.Articulo
             return await articuloServicio.PutServicio(articuloPutDTO, IdArticulo);
         }
 
+<<<<<<< HEAD
         //BORRAR FOTO
         [HttpDelete("/borrarFoto/{foto}")]
         public async Task<ActionResult> DeleteFoto(string foto)
@@ -53,6 +54,8 @@ namespace Icp.TiendaApi.Controllers.Articulo
             return await articuloServicio.DeleteFotoServicio(foto);
         }
 
+=======
+>>>>>>> f5ac5175b7ca767aa05453a8505ca4731e036e69
         //ELIMINAR ARTÍCULO
         [HttpDelete("/eliminarArticulo/{IdArticulo:int}")]
         public async Task<ActionResult> Delete(int IdArticulo)
