@@ -18,21 +18,22 @@ namespace Icp.Tienda.Utilidades
             CreateMap<Usuario, UsuarioGetPorIdDTO>().ReverseMap();
 
             CreateMap<Articulo, ArticuloDTO>().ReverseMap();
-            CreateMap<ArticuloPostDTO, Articulo>()
+            CreateMap<Articulo, ArticuloPostDTO>()
                 .ForMember(x => x.Foto, options => options.Ignore());
-            CreateMap<ArticuloAlmacenDTO, Articulo>().ReverseMap();
-            CreateMap<ArticuloPutDTO, Articulo>().ReverseMap();
+            CreateMap<Articulo, ArticuloAlmacenDTO>().ReverseMap();
+            CreateMap<Articulo, ArticuloPutDTO>().ReverseMap();
+            CreateMap<ArticuloDTO, ArticuloPutDTO>().ReverseMap();
+            CreateMap<Articulo, ArticuloPostDTO>().ReverseMap();
 
             CreateMap<Pedido, PedidoDTO>();
             CreateMap<PedidoPostDTO, Pedido>()
                 .ForMember(x => x.Productos, opciones => opciones.MapFrom(MapItem));
-            CreateMap<PedidoDTO, Pedido>().ReverseMap();
+            CreateMap<Pedido, PedidoDTO>().ReverseMap();
 
             CreateMap<Producto, ProductoDTO>();
 
             CreateMap<Almacen, AlmacenDTO>();
-            CreateMap<AlmacenCreacionDTO, Almacen>();
-            CreateMap<Usuario, UsuarioDTO>().ReverseMap();
+            CreateMap<Almacen, AlmacenCreacionDTO>();
         }
 
         private List<Producto> MapItem(PedidoPostDTO pedidoPostDTO, Pedido pedido)

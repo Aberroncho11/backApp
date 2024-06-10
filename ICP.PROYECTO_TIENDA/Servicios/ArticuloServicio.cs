@@ -25,7 +25,10 @@ namespace Icp.TiendaApi.Servicios
             this.almacenadorArchivos = almacenadorArchivos;
         }
 
-        //VER ARTÍCULOS
+        /// <summary>
+        /// Método que devuelve una lista de artículos
+        /// </summary>
+        /// <returns>Devuelve una lista de artículos</returns>
         public async Task<ActionResult<List<ArticuloAlmacenDTO>>> GetServicio()
         {
             var articulosDB = await context.Articulos
@@ -33,7 +36,12 @@ namespace Icp.TiendaApi.Servicios
 
             return mapper.Map<List<ArticuloAlmacenDTO>>(articulosDB);
         }
-        //VER ARTÍCULOS POR ID
+
+        /// <summary>
+        /// Método que devuelve un artículo por su id
+        /// </summary>
+        /// <param name="IdArticulo"></param>
+        /// <returns></returns>
         public async Task<ActionResult<ArticuloDTO>> GetByIdServicio(int IdArticulo)
         {
             var articuloDB = await context.Articulos
@@ -47,7 +55,11 @@ namespace Icp.TiendaApi.Servicios
             return Ok(mapper.Map<ArticuloDTO>(articuloDB));
         }
 
-        //CREAR ARTÍCULO
+        /// <summary>
+        /// Método que devuelve una lista de artículos por su nombre
+        /// </summary>
+        /// <param name="articuloPostDTO"></param>
+        /// <returns></returns>
         public async Task<ActionResult> PostServicio([FromForm] ArticuloPostDTO articuloPostDTO)
         {
             var articuloDB = mapper.Map<Articulo>(articuloPostDTO);
@@ -79,16 +91,22 @@ namespace Icp.TiendaApi.Servicios
         }
 
 
-        //MODIFICAR ARTÍCULO
+        /// <summary>
+        /// Método que actualiza un artículo
+        /// </summary>
+        /// <param name="articlePutDTO"></param>
+        /// <param name="IdArticulo"></param>
+        /// <returns></returns>
         public async Task<ActionResult> PutServicio([FromForm] ArticuloPutDTO articlePutDTO, int IdArticulo)
         {
             var articuloDB = await context.Articulos.FirstOrDefaultAsync(x => x.IdArticulo == IdArticulo);
 
-            var articuloDBFoto = mapper.Map<ArticuloDTO>(articlePutDTO);
+            if (articuloDB == null) 
+            {
+                return NotFound( new { message = $"El artículo con el id {IdArticulo} no existe"}); 
+            }
 
-            string foto = articuloDBFoto.Foto;
-
-            if (articuloDB == null) { return NotFound(); }
+            string foto = articuloDB.Foto;
 
             articuloDB = mapper.Map(articlePutDTO, articuloDB);
 
@@ -102,7 +120,7 @@ namespace Icp.TiendaApi.Servicios
 
                     var extension = Path.GetExtension(articlePutDTO.Foto.FileName);
 
-                    await almacenadorArchivos.BorrarAchivo($"./wwwroot/Imagenes/{foto}", contenedor);
+                    await almacenadorArchivos.BorrarAchivo($"./wwwroot/Imagenes/{Path.GetFileName(foto)}", contenedor);
 
                     articuloDB.Foto = await almacenadorArchivos.GuardarArchivo(contenido, extension, contenedor, articlePutDTO.Foto.ContentType);
                 }
@@ -117,19 +135,14 @@ namespace Icp.TiendaApi.Servicios
             return Ok();
         }
 
-        //BORRAR FOTO
-        public async Task<ActionResult> DeleteFotoServicio(int IdArticulo)
+        /// <summary>
+        /// Método que elimina una foto
+        /// </summary>
+        /// <param name="foto"></param>
+        /// <returns></returns>
+        public async Task<ActionResult> DeleteFotoServicio(string foto)
         {
-            var articuloDB = await context.Articulos.FirstOrDefaultAsync(x => x.IdArticulo == IdArticulo);
-
-            if (articuloDB == null)
-            {
-                return NotFound();
-            }
-
-            var articuloDBFoto = mapper.Map<ArticuloDTO>(articuloDB);
-
-            await almacenadorArchivos.BorrarAchivo($"./wwwroot/Imagenes/{articuloDBFoto.Foto}", contenedor);
+            await almacenadorArchivos.BorrarAchivo($"./wwwroot/Imagenes/{foto}", contenedor);
 
             await context.SaveChangesAsync();
 
@@ -137,7 +150,11 @@ namespace Icp.TiendaApi.Servicios
         }
 
 
-        //ELIMINAR ARTÍCULO
+        /// <summary>
+        /// Método que elimina un artículo
+        /// </summary>
+        /// <param name="IdArticulo"></param>
+        /// <returns></returns>
         public async Task<ActionResult> DeleteServicio(int IdArticulo)
         {
 
@@ -168,9 +185,25 @@ namespace Icp.TiendaApi.Servicios
                 }
             }
 
-            articuloDB.EstadoArticulo = "Pendiente de eliminar";
-            
-            await context.SaveChangesAsync(); ;
+            if (articuloDB.EstadoArticulo == "Disponible" && almacenDB.Cantidad == 0)
+            {
+                almacenDB.ArticuloAlmacen = null;
+
+                articuloDB.EstadoArticulo = "Eliminado";
+
+                await context.SaveChangesAsync();
+
+                return Ok();
+            }
+            else if (articuloDB.EstadoArticulo == "Disponible" && almacenDB.Cantidad > 0)
+            {
+                articuloDB.EstadoArticulo = "Pendiente de eliminar";
+
+                await context.SaveChangesAsync();
+
+                return Ok();
+            }
+
             return Ok();
         }
 
