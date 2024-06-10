@@ -72,7 +72,7 @@ namespace Icp.TiendaApi.Servicios
                 return NotFound($"La estanteria con el id {almacenAddDTO.IdEstanteria} no existe");
             }
 
-            var articuloDB = await context.Articulos.FirstOrDefaultAsync(x => x.IdArticulo == estanteriaDB.ArticuloAlmacen);
+            var articuloDB = await context.Articulo.FirstOrDefaultAsync(x => x.IdArticulo == estanteriaDB.ArticuloAlmacen);
 
             if (articuloDB.EstadoArticulo == "Pendiente de eliminar")
             {
@@ -87,9 +87,9 @@ namespace Icp.TiendaApi.Servicios
 
             await context.SaveChangesAsync();
 
-            var pedidosPendientes = await context.Pedidos
+            var pedidosPendientes = await context.Pedido
                .Where(x => x.EstadoPedido == "Pendiente de stock")
-               .Include(x => x.Productos)
+               .Include(x => x.Producto)
                .ToListAsync();
 
             var almacen = await context.Almacen.ToListAsync();
@@ -98,7 +98,7 @@ namespace Icp.TiendaApi.Servicios
             {
                 bool todosLosArticulosDisponibles = true;
 
-                foreach (var producto in pedido.Productos)
+                foreach (var producto in pedido.Producto)
                 {
                     var almacenDB = almacen.FirstOrDefault(x => x.ArticuloAlmacen == producto.ArticuloId);
 
@@ -114,7 +114,7 @@ namespace Icp.TiendaApi.Servicios
                 {
                     pedido.EstadoPedido = "Listo para enviar";
 
-                    foreach (var producto in pedido.Productos)
+                    foreach (var producto in pedido.Producto)
                     {
                         var almacenDB = almacen.FirstOrDefault(s => s.ArticuloAlmacen == producto.ArticuloId);
 

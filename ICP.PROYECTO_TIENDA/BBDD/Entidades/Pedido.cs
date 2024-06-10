@@ -4,7 +4,7 @@
     {
         public Pedido()
         {
-            Productos = new HashSet<Producto>();
+            Producto = new HashSet<Producto>();
         }
 
         public int IdPedido { get; set; }
@@ -18,6 +18,6 @@
         public string EstadoPedido { get; set; }
 
         public Usuario Usuario { get; set; }
-        public ICollection<Producto> Productos { get; set; }
+        public ICollection<Producto> Producto { get; set; }
     }
 }

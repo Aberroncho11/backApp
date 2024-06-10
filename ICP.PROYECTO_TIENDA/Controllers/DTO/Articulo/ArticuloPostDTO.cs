@@ -5,6 +5,9 @@ namespace Icp.TiendaApi.Controllers.DTO.Articulo
 {
     public class ArticuloPostDTO
     {
+        [Required(ErrorMessage = "Nombre requerido")]
+        [StringLength(20, ErrorMessage = "La longitud de la descripción debe ser máxima de 20 caracteres")]
+        public string Nombre { get; set; }
         [Required(ErrorMessage = "Descripción requerida")]
         [StringLength(50, ErrorMessage = "La longitud de la descripción debe ser máxima de 50 caracteres")]
         public string Descripcion { get; set; }

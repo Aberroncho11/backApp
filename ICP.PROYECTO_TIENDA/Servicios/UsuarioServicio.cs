@@ -32,14 +32,14 @@ namespace Icp.TiendaApi.Servicios
         /// <returns>La respuesta de autenticación del usuario.</returns>
         public async Task<ActionResult<UsuarioRespuestaAutenticacionDTO>> LoginServicio(UsuarioCredencialesDTO usuarioCredencialesDTO)
         {
-            var existeEmail = await context.Usuarios.FirstOrDefaultAsync(x => x.Email == usuarioCredencialesDTO.Email);
+            var existeEmail = await context.Usuario.FirstOrDefaultAsync(x => x.Email == usuarioCredencialesDTO.Email);
 
             if (existeEmail == null)
             {
                 return BadRequest($"No existe un usuario con el email {usuarioCredencialesDTO.Email}");
             }
 
-            var usuarioDB = await context.Usuarios.FirstOrDefaultAsync(x => x.Email == usuarioCredencialesDTO.Email
+            var usuarioDB = await context.Usuario.FirstOrDefaultAsync(x => x.Email == usuarioCredencialesDTO.Email
             && x.Password == usuarioCredencialesDTO.Password);
             
             if (usuarioDB == null)
@@ -106,7 +106,7 @@ namespace Icp.TiendaApi.Servicios
 
         public async Task<ActionResult<bool>> CheckEmailService(string Email)
         {
-            var userDB = await context.Usuarios.FirstOrDefaultAsync(x => x.Email == Email);
+            var userDB = await context.Usuario.FirstOrDefaultAsync(x => x.Email == Email);
 
             if (userDB != null)
             {
@@ -118,7 +118,7 @@ namespace Icp.TiendaApi.Servicios
 
         public async Task<ActionResult<bool>> CheckNicknameService(string Nickname)
         {
-            var userDB = await context.Usuarios.FirstOrDefaultAsync(x => x.Nickname == Nickname);
+            var userDB = await context.Usuario.FirstOrDefaultAsync(x => x.Nickname == Nickname);
 
             if (userDB != null)
             {
@@ -135,7 +135,7 @@ namespace Icp.TiendaApi.Servicios
         /// <returns>Una lista de los usuarios</returns>
         public async Task<ActionResult<List<UsuarioDTO>>> GetServicio()
         {
-            var usuariosDB = await context.Usuarios.ToListAsync();
+            var usuariosDB = await context.Usuario.ToListAsync();
 
             return mapper.Map<List<UsuarioDTO>>(usuariosDB);
         }
@@ -143,18 +143,18 @@ namespace Icp.TiendaApi.Servicios
         /// <summary>
         /// Obtiene un usuario por su Id.
         /// </summary>
-        /// <param name="IdUsuario">El Id del usuario.</param>
+        /// <param name="Nickname">El Id del usuario.</param>
         /// <returns>El usuario encontrado.</returns>
-        public async Task<ActionResult<UsuarioGetPorIdDTO>> GetByIdServicio(int IdUsuario)
+        public async Task<ActionResult<UsuarioGetPorNicknameDTO>> GetByNicknameServicio(string Nickname)
         {
-            var usuarioDB = await context.Usuarios.FirstOrDefaultAsync(x => x.IdUsuario == IdUsuario);
+            var usuarioDB = await context.Usuario.FirstOrDefaultAsync(x => x.Nickname == Nickname);
 
             if (usuarioDB == null)
             {
-                return NotFound($"El usuario con el id {IdUsuario} no existe");
+                return NotFound($"El usuario con el nickname {Nickname} no existe");
             }
 
-            return Ok(mapper.Map<UsuarioGetPorIdDTO>(usuarioDB));
+            return Ok(mapper.Map<UsuarioGetPorNicknameDTO>(usuarioDB));
         }
 
         /// <summary>
@@ -164,14 +164,14 @@ namespace Icp.TiendaApi.Servicios
         /// <returns>El resultado de la operación.</returns>
         public async Task<ActionResult> PostServicio([FromForm] UsuarioPostDTO usuarioPostDTO)
         {
-            var existeNickname = await context.Usuarios.FirstOrDefaultAsync(x => x.Nickname == usuarioPostDTO.Nickname);
+            var existeNickname = await context.Usuario.FirstOrDefaultAsync(x => x.Nickname == usuarioPostDTO.Nickname);
 
             if (existeNickname != null)
             {
                 return BadRequest($"Ya existe un usuario con el nombre {usuarioPostDTO.Nickname}");
             }
 
-            var existeEmail = await context.Usuarios.FirstOrDefaultAsync(x => x.Email == usuarioPostDTO.Email);
+            var existeEmail = await context.Usuario.FirstOrDefaultAsync(x => x.Email == usuarioPostDTO.Email);
 
             if (existeEmail != null)
             {
@@ -195,13 +195,13 @@ namespace Icp.TiendaApi.Servicios
         /// <param name="usuarioPostDTO">Los datos del usuario a actualizar.</param>
         /// <param name="IdUsuario">El Id del usuario a actualizar.</param>
         /// <returns>El resultado de la operación.</returns>
-        public async Task<ActionResult> PutServicio([FromForm] UsuarioPostDTO usuarioPostDTO, int IdUsuario)
+        public async Task<ActionResult> PutServicio([FromForm] UsuarioPostDTO usuarioPostDTO, string Nickname)
         {
-            var usuarioDB = await context.Usuarios.FirstOrDefaultAsync(x => x.IdUsuario == IdUsuario);
+            var usuarioDB = await context.Usuario.FirstOrDefaultAsync(x => x.Nickname == Nickname);
 
             if (usuarioDB == null)
             {
-                return NotFound($"El usuario con el id ${IdUsuario} no existe");
+                return NotFound($"El usuario con el Nickname ${Nickname} no existe");
             }
 
             usuarioDB = mapper.Map(usuarioPostDTO, usuarioDB);
@@ -220,7 +220,7 @@ namespace Icp.TiendaApi.Servicios
         /// <returns>El resultado de la operación.</returns>
         public async Task<ActionResult> DeleteServicio(int IdUsuario)
         {
-            var usuarioDB = await context.Usuarios.FirstOrDefaultAsync(x => x.IdUsuario == IdUsuario);
+            var usuarioDB = await context.Usuario.FirstOrDefaultAsync(x => x.IdUsuario == IdUsuario);
 
             if (usuarioDB == null)
             {

@@ -1,14 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Icp.TiendaApi.BBDD;
 using Icp.TiendaApi.Servicios;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Icp.TiendaApi.Servicios.Almacenador;
-using Icp.TiendaApi.Controllers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Icp.TiendaApi.Controllers;
 
 namespace Icp.TiendaApi
 {
@@ -23,13 +22,11 @@ namespace Icp.TiendaApi
 
         public void ConfigureServices(IServiceCollection services)
         {
-
             services.AddTransient<IAlmacenadorArchivos, AlmacenadorArchivosLocal>();
             services.AddHttpContextAccessor();
 
             services.AddControllers();
             services.AddEndpointsApiExplorer();
-            services.AddSwaggerGen();
 
             services.AddCors(options =>
             {
@@ -70,66 +67,21 @@ namespace Icp.TiendaApi
                     .Build();
             });
 
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebAPIAutores", Version = "v1" });
-
-                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-                {
-                    Name = "Authorization",
-                    Type = SecuritySchemeType.ApiKey,
-                    Scheme = "Bearer",
-                    BearerFormat = "JWT",
-                    In = ParameterLocation.Header
-                });
-
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement
-                {
-                    {
-                        new OpenApiSecurityScheme
-                        {
-                            Reference = new OpenApiReference
-                            {
-                                Type = ReferenceType.SecurityScheme,
-                                Id = "Bearer"
-                            }
-                        },
-                        new string[] {}
-                    }
-                });
-
-            });
-
             services.AddAutoMapper(typeof(Startup));
 
             services.AddScoped<UsuarioServicio>();
-
             services.AddScoped<ArticuloServicio>();
-
             services.AddScoped<PedidoServicio>();
-
             services.AddScoped<AlmacenServicio>();
-
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
-
             app.UseStaticFiles();
-
             app.UseHttpsRedirection();
-
             app.UseRouting();
-
             app.UseCors("AllowSpecificOrigin");
-
             app.UseAuthentication();
-
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

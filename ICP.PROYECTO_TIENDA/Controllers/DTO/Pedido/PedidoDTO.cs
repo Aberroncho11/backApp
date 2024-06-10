@@ -13,7 +13,7 @@ namespace Icp.TiendaApi.Controllers.DTO.Pedido
         public string Direccion { get; set; }
         public string Provincia { get; set; }
         public string EstadoPedido { get; set; }
-        public List<ProductoDTO> Productos { get; set; }
+        public List<ProductoDTO> Producto { get; set; }
 
     }
 }

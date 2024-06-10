@@ -2,6 +2,7 @@
 {
     public class ArticuloDTO
     {
+        public string Nombre { get; set; }
         public string Descripcion { get; set; }
         public string Fabricante { get; set; }
         public string Peso { get; set; }

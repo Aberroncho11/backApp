@@ -27,7 +27,7 @@ namespace Icp.TiendaApi.Servicios
         public async Task<ActionResult<List<PedidoDTO>>> GetServicio()
         {
             // Obtener todos los pedidos de la base de datos, incluyendo los productos asociados
-            var pedidosDB = await context.Pedidos.Include(x => x.Productos).ToListAsync();
+            var pedidosDB = await context.Pedido.Include(x => x.Producto).ToListAsync();
 
             // Mapear los pedidos a DTO y devolverlos como resultado
             return mapper.Map<List<PedidoDTO>>(pedidosDB);
@@ -44,7 +44,7 @@ namespace Icp.TiendaApi.Servicios
             string estado = "Listo para enviar";
 
             // Verificar si el usuario existe en la base de datos
-            var existeUsuario = await context.Usuarios.FirstOrDefaultAsync(x => x.IdUsuario == pedidoPostDTO.UsuarioId);
+            var existeUsuario = await context.Usuario.FirstOrDefaultAsync(x => x.IdUsuario == pedidoPostDTO.UsuarioId);
 
             // Si el usuario no existe, devolver un error
             if (existeUsuario == null)
@@ -64,7 +64,7 @@ namespace Icp.TiendaApi.Servicios
             var articulosIds = pedidoPostDTO.Articulos.Select(x => x.ArticuloId).ToList();
 
             // Obtener los artículos de la base de datos que corresponden a los IDs enviados
-            var articulosDB = await context.Articulos
+            var articulosDB = await context.Articulo
                  .Where(x => articulosIds.Contains(x.IdArticulo))
                  .ToListAsync();
 
@@ -109,13 +109,13 @@ namespace Icp.TiendaApi.Servicios
                 };
 
                 // Agregar el producto al pedido
-                pedidoDB.Productos.Add(pedidoProducto);
+                pedidoDB.Producto.Add(pedidoProducto);
 
                 // Obtener el artículo y la estantería correspondientes al producto del pedido
                 var estanteriaDB = await context.Almacen
                     .FirstOrDefaultAsync(x => x.ArticuloAlmacen == productoDTO.ArticuloId);
 
-                var articuloDB = await context.Articulos
+                var articuloDB = await context.Articulo
                     .FirstOrDefaultAsync(x => x.IdArticulo == productoDTO.ArticuloId);
 
                 // Verificar si hay suficiente stock para el producto del pedido
@@ -150,7 +150,7 @@ namespace Icp.TiendaApi.Servicios
                 var estanteriaDB = await context.Almacen
                     .FirstOrDefaultAsync(x => x.ArticuloAlmacen == productoDTO.ArticuloId);
 
-                var articuloDB = await context.Articulos
+                var articuloDB = await context.Articulo
                     .FirstOrDefaultAsync(x => x.IdArticulo == productoDTO.ArticuloId);
 
                 // Verificar si el artículo está pendiente de eliminar y si se quedó sin stock

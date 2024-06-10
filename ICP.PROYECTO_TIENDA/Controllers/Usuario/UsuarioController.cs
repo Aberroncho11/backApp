@@ -18,7 +18,11 @@ namespace Icp.TiendaApi.Controllers.User
             this.usuarioServicio = usuarioServicio;
         }
 
-        // LOGIN
+        /// <summary>
+        /// Realiza el inicio de sesión del usuario.
+        /// </summary>
+        /// <param name="usuarioCredencialesDTO"></param>
+        /// <returns>La respuesta de autenticación del usuario.</returns>
         [HttpPost("/login")]
         public async Task<ActionResult<UsuarioRespuestaAutenticacionDTO>> Login(UsuarioCredencialesDTO usuarioCredencialesDTO)
         {
@@ -46,11 +50,11 @@ namespace Icp.TiendaApi.Controllers.User
             return await usuarioServicio.GetServicio();
         }
 
-        //VER USUARIOS POR ID
-        [HttpGet("/verUsuarioPorId/{IdUsuario:int}")]
-        public async Task<ActionResult<UsuarioGetPorIdDTO>> Get(int IdUsuario)
+        //VER USUARIOS POR Nickname
+        [HttpGet("/verUsuarioPorNickname/{Nickname}")]
+        public async Task<ActionResult<UsuarioGetPorNicknameDTO>> Get(string Nickname)
         {
-            return await usuarioServicio.GetByIdServicio(IdUsuario);
+            return await usuarioServicio.GetByNicknameServicio(Nickname);
         }
 
         // CREAR USUARIOS
@@ -62,11 +66,11 @@ namespace Icp.TiendaApi.Controllers.User
         }
 
         // MODIFICAR USUARIOS
-        [HttpPut("/modificarUsuario/{IdUsuario:int}")]
+        [HttpPut("/modificarUsuario/{Nickname}")]
         //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Administrador")]
-        public async Task<ActionResult> Put([FromForm] UsuarioPostDTO userCreacionDTO, int IdUsuario)
+        public async Task<ActionResult> Put([FromForm] UsuarioPostDTO userCreacionDTO, string Nickname)
         {
-            return await usuarioServicio.PutServicio(userCreacionDTO, IdUsuario);
+            return await usuarioServicio.PutServicio(userCreacionDTO, Nickname);
         }
 
         // ELIMINAR USUARIOS

@@ -15,7 +15,7 @@ namespace Icp.Tienda.Utilidades
         {
             CreateMap<Usuario, UsuarioDTO>();
             CreateMap<Usuario, UsuarioPostDTO>().ReverseMap();
-            CreateMap<Usuario, UsuarioGetPorIdDTO>().ReverseMap();
+            CreateMap<Usuario, UsuarioGetPorNicknameDTO>().ReverseMap();
 
             CreateMap<Articulo, ArticuloDTO>().ReverseMap();
             CreateMap<Articulo, ArticuloPostDTO>()
@@ -27,7 +27,7 @@ namespace Icp.Tienda.Utilidades
 
             CreateMap<Pedido, PedidoDTO>();
             CreateMap<PedidoPostDTO, Pedido>()
-                .ForMember(x => x.Productos, opciones => opciones.MapFrom(MapItem));
+                .ForMember(x => x.Producto, opciones => opciones.MapFrom(MapItem));
             CreateMap<Pedido, PedidoDTO>().ReverseMap();
 
             CreateMap<Producto, ProductoDTO>();

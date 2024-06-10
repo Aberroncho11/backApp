@@ -31,7 +31,7 @@ namespace Icp.TiendaApi.Servicios
         /// <returns>Devuelve una lista de artículos</returns>
         public async Task<ActionResult<List<ArticuloAlmacenDTO>>> GetServicio()
         {
-            var articulosDB = await context.Articulos
+            var articulosDB = await context.Articulo
                 .Include(x => x.Almacen).ToListAsync();
 
             return mapper.Map<List<ArticuloAlmacenDTO>>(articulosDB);
@@ -42,10 +42,10 @@ namespace Icp.TiendaApi.Servicios
         /// </summary>
         /// <param name="IdArticulo"></param>
         /// <returns></returns>
-        public async Task<ActionResult<ArticuloDTO>> GetByIdServicio(int IdArticulo)
+        public async Task<ActionResult<ArticuloDTO>> GetByNombreServicio(string Nombre)
         {
-            var articuloDB = await context.Articulos
-                .FirstOrDefaultAsync(x => x.IdArticulo == IdArticulo);
+            var articuloDB = await context.Articulo
+                .FirstOrDefaultAsync(x => x.Nombre == Nombre);
 
             if (articuloDB == null)
             {
@@ -95,15 +95,15 @@ namespace Icp.TiendaApi.Servicios
         /// Método que actualiza un artículo
         /// </summary>
         /// <param name="articlePutDTO"></param>
-        /// <param name="IdArticulo"></param>
+        /// <param name="Nombre"></param>
         /// <returns></returns>
-        public async Task<ActionResult> PutServicio([FromForm] ArticuloPutDTO articlePutDTO, int IdArticulo)
+        public async Task<ActionResult> PutServicio([FromForm] ArticuloPutDTO articlePutDTO, string Nombre)
         {
-            var articuloDB = await context.Articulos.FirstOrDefaultAsync(x => x.IdArticulo == IdArticulo);
+            var articuloDB = await context.Articulo.FirstOrDefaultAsync(x => x.Nombre == Nombre);
 
             if (articuloDB == null) 
             {
-                return NotFound( new { message = $"El artículo con el id {IdArticulo} no existe"}); 
+                return NotFound( new { message = $"El artículo con el nombre {Nombre} no existe"}); 
             }
 
             string foto = articuloDB.Foto;
@@ -153,16 +153,15 @@ namespace Icp.TiendaApi.Servicios
         /// <summary>
         /// Método que elimina un artículo
         /// </summary>
-        /// <param name="IdArticulo"></param>
+        /// <param name="Nombre"></param>
         /// <returns></returns>
-        public async Task<ActionResult> DeleteServicio(int IdArticulo)
+        public async Task<ActionResult> DeleteServicio(string Nombre)
         {
-
-            var articuloDB = await context.Articulos.FirstOrDefaultAsync(x => x.IdArticulo == IdArticulo);
+            var articuloDB = await context.Articulo.FirstOrDefaultAsync(x => x.Nombre == Nombre);
 
             if (articuloDB == null)
             {
-                return NotFound();
+                return NotFound(new { message = "Artículo no encontrado" });
             }
 
             var almacenDB = await context.Almacen
@@ -170,30 +169,29 @@ namespace Icp.TiendaApi.Servicios
 
             if (articuloDB.EstadoArticulo == "Pendiente de eliminar")
             {
-                return BadRequest("Este artículo ya está en proceso de eliminarse");
+                return BadRequest(new { message = "Este artículo ya está en proceso de eliminarse" });
             }
 
-            var pedidosConArticulo = await context.Pedidos
-            .Where(x => x.Productos.Any(x => x.ArticuloId == articuloDB.IdArticulo))
-            .ToListAsync();
+            var pedidosConArticulo = await context.Pedido
+                .Where(x => x.Producto.Any(p => p.ArticuloId == articuloDB.IdArticulo))
+                .ToListAsync();
 
             foreach (var pedido in pedidosConArticulo)
             {
-                if(pedido.EstadoPedido == "Pendiente de stock")
+                if (pedido.EstadoPedido == "Pendiente de stock")
                 {
-                    return BadRequest("No se puede eliminar el artículo porque forma parte de un pedido pendiente de stock");
+                    return BadRequest(new { message = "No se puede eliminar el artículo porque forma parte de un pedido pendiente de stock" });
                 }
             }
 
             if (articuloDB.EstadoArticulo == "Disponible" && almacenDB.Cantidad == 0)
             {
                 almacenDB.ArticuloAlmacen = null;
-
                 articuloDB.EstadoArticulo = "Eliminado";
 
                 await context.SaveChangesAsync();
 
-                return Ok();
+                return Ok(new { message = "Artículo eliminado correctamente" });
             }
             else if (articuloDB.EstadoArticulo == "Disponible" && almacenDB.Cantidad > 0)
             {
@@ -201,10 +199,10 @@ namespace Icp.TiendaApi.Servicios
 
                 await context.SaveChangesAsync();
 
-                return Ok();
+                return Ok(new { message = "Artículo marcado como pendiente de eliminar" });
             }
 
-            return Ok();
+            return BadRequest(new { message = "No se pudo eliminar el artículo" });
         }
 
     }

@@ -1,6 +1,6 @@
 ﻿namespace Icp.TiendaApi.Controllers.DTO.Usuario
 {
-    public class UsuarioGetPorIdDTO
+    public class UsuarioGetPorNicknameDTO
     {
         public int Perfil { get; set; }
         public string Password { get; set; }

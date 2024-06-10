@@ -25,11 +25,11 @@ namespace Icp.TiendaApi.Controllers.Articulo
             return await articuloServicio.GetServicio();
         }
 
-        //VER ARTÍCULOS POR ID
-        [HttpGet("/verArticuloPorId/{IdArticulo:int}")]
-        public async Task<ActionResult<ArticuloDTO>> Get(int IdArticulo)
+        //VER ARTÍCULOS POR Nombre
+        [HttpGet("/verArticuloPorNombre/{Nombre}")]
+        public async Task<ActionResult<ArticuloDTO>> Get(string Nombre)
         {
-            return await articuloServicio.GetByIdServicio(IdArticulo);
+            return await articuloServicio.GetByNombreServicio(Nombre);
         }
 
         //CREAR ARTÍCULO
@@ -40,10 +40,10 @@ namespace Icp.TiendaApi.Controllers.Articulo
         }
 
         //MODIFICAR ARTÍCULO
-        [HttpPut("/modificarArticulo/{IdArticulo:int}")]
-        public async Task<ActionResult> Put([FromForm] ArticuloPutDTO articuloPutDTO, int IdArticulo)
+        [HttpPut("/modificarArticulo/{Nombre}")]
+        public async Task<ActionResult> Put([FromForm] ArticuloPutDTO articuloPutDTO, string Nombre)
         {
-            return await articuloServicio.PutServicio(articuloPutDTO, IdArticulo);
+            return await articuloServicio.PutServicio(articuloPutDTO, Nombre);
         }
 
         //BORRAR FOTO
@@ -54,10 +54,10 @@ namespace Icp.TiendaApi.Controllers.Articulo
         }
 
         //ELIMINAR ARTÍCULO
-        [HttpDelete("/eliminarArticulo/{IdArticulo:int}")]
-        public async Task<ActionResult> Delete(int IdArticulo)
+        [HttpDelete("/eliminarArticulo/{Nombre}")]
+        public async Task<ActionResult> Delete(string Nombre)
         {
-            return await articuloServicio.DeleteServicio(IdArticulo);
+            return await articuloServicio.DeleteServicio(Nombre);
         }
     }
 }

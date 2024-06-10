@@ -13,12 +13,12 @@ namespace Icp.TiendaApi.BBDD
         {
         }
 
-        public virtual DbSet<Articulo> Articulos { get; set; }
-        public virtual DbSet<Producto> Productos { get; set; }
-        public virtual DbSet<Pedido> Pedidos { get; set; }
-        public virtual DbSet<Perfil> Perfiles { get; set; }
+        public virtual DbSet<Articulo> Articulo { get; set; }
+        public virtual DbSet<Producto> Producto { get; set; }
+        public virtual DbSet<Pedido> Pedido { get; set; }
+        public virtual DbSet<Perfil> Perfil { get; set; }
         public virtual DbSet<Almacen> Almacen { get; set; }
-        public virtual DbSet<Usuario> Usuarios { get; set; }
+        public virtual DbSet<Usuario> Usuario { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -54,9 +54,12 @@ namespace Icp.TiendaApi.BBDD
                 entity.HasKey(e => e.IdArticulo)
                     .HasName("PK__ARTICULO__41ADBDE5CB27BDBE");
 
-                entity.ToTable("ARTICULOS");
+                entity.ToTable("ARTICULO");
 
                 entity.Property(e => e.IdArticulo).HasColumnName("ID_ARTICULO");
+
+                entity.HasIndex(e => e.Nombre, "UQ__ARTICULO__B21D0AB98179B0A5")
+                    .IsUnique();
 
                 entity.Property(e => e.Altura).HasColumnName("ALTURA");
 
@@ -88,7 +91,7 @@ namespace Icp.TiendaApi.BBDD
                 entity.HasKey(e => e.IdPedido)
                     .HasName("PK__PEDIDOS__A05C2F2A69C595EC");
 
-                entity.ToTable("PEDIDOS");
+                entity.ToTable("PEDIDO");
 
                 entity.Property(e => e.IdPedido).HasColumnName("ID_PEDIDO");
 
@@ -144,7 +147,7 @@ namespace Icp.TiendaApi.BBDD
                 entity.HasKey(e => e.IdPerfil)
                     .HasName("PK__PERFILES__90BDE8098E69BBCE");
 
-                entity.ToTable("PERFILES");
+                entity.ToTable("PERFIL");
 
                 entity.Property(e => e.IdPerfil).HasColumnName("ID_PERFIL");
 
@@ -158,7 +161,7 @@ namespace Icp.TiendaApi.BBDD
                 entity.HasKey(e => new { e.PedidoId, e.ArticuloId })
                     .HasName("PK__PRODUCTO__C892A37004892D23");
 
-                entity.ToTable("PRODUCTOS");
+                entity.ToTable("PRODUCTO");
 
                 entity.Property(e => e.PedidoId).HasColumnName("PEDIDO_ID");
 
@@ -167,13 +170,13 @@ namespace Icp.TiendaApi.BBDD
                 entity.Property(e => e.Cantidad).HasColumnName("CANTIDAD");
 
                 entity.HasOne(d => d.Articulo)
-                    .WithMany(p => p.Productos)
+                    .WithMany(p => p.Producto)
                     .HasForeignKey(d => d.ArticuloId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__PRODUCTOS__ARTIC__4F089A18");
 
                 entity.HasOne(d => d.Pedido)
-                    .WithMany(p => p.Productos)
+                    .WithMany(p => p.Producto)
                     .HasForeignKey(d => d.PedidoId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__PRODUCTOS__PEDID__4E1475DF");
@@ -184,7 +187,7 @@ namespace Icp.TiendaApi.BBDD
                 entity.HasKey(e => e.IdUsuario)
                     .HasName("PK__USUARIOS__91136B909224D7DF");
 
-                entity.ToTable("USUARIOS");
+                entity.ToTable("USUARIO");
 
                 entity.HasIndex(e => e.Email, "UQ__USUARIOS__161CF724809135E3")
                     .IsUnique();

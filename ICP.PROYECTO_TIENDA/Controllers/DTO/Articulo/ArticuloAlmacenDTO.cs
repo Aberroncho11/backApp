@@ -5,6 +5,7 @@ namespace Icp.TiendaApi.Controllers.DTO.Articulo
     public class ArticuloAlmacenDTO
     {
         public int IdArticulo { get; set; }
+        public string Nombre { get; set; }
         public string Descripcion { get; set; }
         public string Fabricante { get; set; }
         public string Peso { get; set; }
