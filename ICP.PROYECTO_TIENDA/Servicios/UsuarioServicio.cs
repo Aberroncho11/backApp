@@ -12,18 +12,9 @@ using System.Text;
 
 namespace Icp.TiendaApi.Servicios
 {
-<<<<<<< HEAD
     public class UsuarioServicio : ControllerBase
     {
         private readonly TiendaContext context;
-=======
-
-    public class UsuarioServicio : ControllerBase
-    {
- 
-        private readonly TiendaContext context;
- 
->>>>>>> f5ac5175b7ca767aa05453a8505ca4731e036e69
         private IMapper mapper;
         private readonly IConfiguration configuration;
 
@@ -45,16 +36,11 @@ namespace Icp.TiendaApi.Servicios
 
             if (existeEmail == null)
             {
-<<<<<<< HEAD
                 return BadRequest($"No existe un usuario con el email {usuarioCredencialesDTO.Email}");
-=======
-                return BadRequest(new { message = $"No existe un usuario con el email {usuarioCredencialesDTO.Email}" });
->>>>>>> f5ac5175b7ca767aa05453a8505ca4731e036e69
             }
 
             var usuarioDB = await context.Usuarios.FirstOrDefaultAsync(x => x.Email == usuarioCredencialesDTO.Email
             && x.Password == usuarioCredencialesDTO.Password);
-<<<<<<< HEAD
             
             if (usuarioDB == null)
             {
@@ -63,16 +49,6 @@ namespace Icp.TiendaApi.Servicios
             else if (usuarioDB.EstadoUsuario == "Eliminado")
             {
                 return BadRequest("El usuario con el que se quiere acceder está eliminado");
-=======
-
-            if (usuarioDB == null)
-            {
-                return BadRequest(new { message = "Login incorrecto, el email no coincide con la contraseña puesta o la contraseña es incorrecta" });
-            }
-            else if (usuarioDB.EstadoUsuario == "Eliminado")
-            {
-                return BadRequest(new { message = "El usuario con el que se quiere acceder está eliminado" });
->>>>>>> f5ac5175b7ca767aa05453a8505ca4731e036e69
             }
             else
             {
@@ -89,15 +65,8 @@ namespace Icp.TiendaApi.Servicios
         /// <returns>La respuesta de autenticación del usuario.</returns>
         public async Task<ActionResult<UsuarioRespuestaAutenticacionDTO>> ConstruirTokenServicio(UsuarioDTO usuarioDTO)
         {
-<<<<<<< HEAD
             string rol = "";
 
-=======
-            
-            string rol = "";
-
-            // Definimos el rol según el perfil del usuario
->>>>>>> f5ac5175b7ca767aa05453a8505ca4731e036e69
             if (usuarioDTO.Perfil == 1)
             {
                 rol = "Administrador";
@@ -111,29 +80,17 @@ namespace Icp.TiendaApi.Servicios
                 rol = "Operador";
             }
 
-<<<<<<< HEAD
             List<Claim> claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Role, rol),
                 new Claim("IdUsuario", usuarioDTO.IdUsuario.ToString())
-=======
-            // Metemos los datos del usuario en el token
-            List<Claim> claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Role, rol),
-                new Claim(ClaimTypes.UserData, usuarioDTO.IdUsuario.ToString())
->>>>>>> f5ac5175b7ca767aa05453a8505ca4731e036e69
             };
 
             var llave = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["llavejwt"]));
 
             var creds = new SigningCredentials(llave, SecurityAlgorithms.HmacSha256);
 
-<<<<<<< HEAD
             var expiracion = DateTime.UtcNow.AddYears(1);
-=======
-            var expiracion = DateTime.UtcNow.AddHours(1);
->>>>>>> f5ac5175b7ca767aa05453a8505ca4731e036e69
 
             var securityToken = new JwtSecurityToken(claims: claims, expires: expiracion, signingCredentials: creds);
 
@@ -147,11 +104,6 @@ namespace Icp.TiendaApi.Servicios
             return respuestaAutenticacionDTO;
         }
 
-        /// <summary>
-        /// Verifica si existe un usuario con el correo electrónico dado.
-        /// </summary>
-        /// <param name="Email">El correo electrónico a verificar.</param>
-        /// <returns>Un indicador booleano que indica si existe un usuario con el correo electrónico dado.</returns>
         public async Task<ActionResult<bool>> CheckEmailService(string Email)
         {
             var userDB = await context.Usuarios.FirstOrDefaultAsync(x => x.Email == Email);
@@ -164,12 +116,6 @@ namespace Icp.TiendaApi.Servicios
             return Ok(false);
         }
 
-
-        /// <summary>
-        /// Verifica si existe un usuario con el nombre de usuario dado.
-        /// </summary>
-        /// <param name="Nickname">El nombre de usuario a verificar.</param>
-        /// <returns>Un indicador booleano que indica si existe un usuario con el nombre de usuario dado.</returns>
         public async Task<ActionResult<bool>> CheckNicknameService(string Nickname)
         {
             var userDB = await context.Usuarios.FirstOrDefaultAsync(x => x.Nickname == Nickname);
@@ -280,17 +226,9 @@ namespace Icp.TiendaApi.Servicios
             {
                 return NotFound($"El usuario con el id {IdUsuario} no existe");
             }
-<<<<<<< HEAD
             if (usuarioDB.EstadoUsuario == "Eliminado")
-=======
-            else if (usuarioDB.EstadoUsuario == "Eliminado")
->>>>>>> f5ac5175b7ca767aa05453a8505ca4731e036e69
             {
                 return BadRequest($"El usuario con el id {IdUsuario} ya está eliminado");
-            }
-            else if(usuarioDB.Perfil == 1)
-            {
-                return BadRequest($"No se puede eliminar un usuario admnistrador");
             }
 
             usuarioDB.EstadoUsuario = "Eliminado";

@@ -8,7 +8,6 @@ using Icp.TiendaApi.Servicios.Almacenador;
 using System.Linq.Dynamic.Core;
 using Icp.TiendaApi.Controllers.DTO;
 using Icp.TiendaApi.Controllers.DTO.Pedido;
-using System;
 
 namespace Icp.TiendaApi.Servicios
 {
@@ -27,40 +26,22 @@ namespace Icp.TiendaApi.Servicios
         }
 
         /// <summary>
-<<<<<<< HEAD
         /// Método que devuelve una lista de artículos
         /// </summary>
         /// <returns>Devuelve una lista de artículos</returns>
-=======
-        /// Obtiene la lista de artículos almacenados.
-        /// </summary>
-        /// <returns>La lista de artículos almacenados.</returns>
->>>>>>> f5ac5175b7ca767aa05453a8505ca4731e036e69
         public async Task<ActionResult<List<ArticuloAlmacenDTO>>> GetServicio()
         {
             var articulosDB = await context.Articulos
                 .Include(x => x.Almacen).ToListAsync();
-            
-            if(!articulosDB.Any())
-            {
-                return NotFound(new { message = "No hay artículos" });
-            }
 
             return mapper.Map<List<ArticuloAlmacenDTO>>(articulosDB);
         }
 
         /// <summary>
-<<<<<<< HEAD
         /// Método que devuelve un artículo por su id
         /// </summary>
         /// <param name="IdArticulo"></param>
         /// <returns></returns>
-=======
-        /// Obtiene un artículo por su id.
-        /// </summary>
-        /// <param name="IdArticulo"></param>
-        /// <returns>Los datos del artículo con el id recibido.</returns>
->>>>>>> f5ac5175b7ca767aa05453a8505ca4731e036e69
         public async Task<ActionResult<ArticuloDTO>> GetByIdServicio(int IdArticulo)
         {
             var articuloDB = await context.Articulos
@@ -68,18 +49,14 @@ namespace Icp.TiendaApi.Servicios
 
             if (articuloDB == null)
             {
-                return NotFound(new { message = $"No existe ningún artículo con el id {IdArticulo}" });
+                return NotFound();
             }
 
             return Ok(mapper.Map<ArticuloDTO>(articuloDB));
         }
 
         /// <summary>
-<<<<<<< HEAD
         /// Método que devuelve una lista de artículos por su nombre
-=======
-        /// Obtiene los artículos que coincidan con los filtros recibidos.
->>>>>>> f5ac5175b7ca767aa05453a8505ca4731e036e69
         /// </summary>
         /// <param name="articuloPostDTO"></param>
         /// <returns></returns>
@@ -92,19 +69,14 @@ namespace Icp.TiendaApi.Servicios
                 using (var memoryStream = new MemoryStream())
                 {
                     await articuloPostDTO.Foto.CopyToAsync(memoryStream);
-
                     var contenido = memoryStream.ToArray();
-
                     var extension = Path.GetExtension(articuloPostDTO.Foto.FileName);
-
                     articuloDB.Foto = await almacenadorArchivos.GuardarArchivo(contenido, extension, contenedor, articuloPostDTO.Foto.ContentType);
                 }
             }
 
             articuloDB.EstadoArticulo = "Disponible";
-
             context.Add(articuloDB);
-
             await context.SaveChangesAsync();
 
             var almacenDB = new Almacen
@@ -113,7 +85,6 @@ namespace Icp.TiendaApi.Servicios
             };
 
             context.Add(almacenDB);
-
             await context.SaveChangesAsync();
 
             return Ok();
@@ -121,11 +92,7 @@ namespace Icp.TiendaApi.Servicios
 
 
         /// <summary>
-<<<<<<< HEAD
         /// Método que actualiza un artículo
-=======
-        /// Actualiza un artículo existente.
->>>>>>> f5ac5175b7ca767aa05453a8505ca4731e036e69
         /// </summary>
         /// <param name="articlePutDTO"></param>
         /// <param name="IdArticulo"></param>
@@ -134,16 +101,10 @@ namespace Icp.TiendaApi.Servicios
         {
             var articuloDB = await context.Articulos.FirstOrDefaultAsync(x => x.IdArticulo == IdArticulo);
 
-<<<<<<< HEAD
             if (articuloDB == null) 
             {
                 return NotFound( new { message = $"El artículo con el id {IdArticulo} no existe"}); 
             }
-
-            string foto = articuloDB.Foto;
-=======
-            if (articuloDB == null) { return NotFound(); }
->>>>>>> f5ac5175b7ca767aa05453a8505ca4731e036e69
 
             string foto = articuloDB.Foto;
 
@@ -162,7 +123,6 @@ namespace Icp.TiendaApi.Servicios
                     await almacenadorArchivos.BorrarAchivo($"./wwwroot/Imagenes/{Path.GetFileName(foto)}", contenedor);
 
                     articuloDB.Foto = await almacenadorArchivos.GuardarArchivo(contenido, extension, contenedor, articlePutDTO.Foto.ContentType);
-
                 }
             }
             else
@@ -176,7 +136,6 @@ namespace Icp.TiendaApi.Servicios
         }
 
         /// <summary>
-<<<<<<< HEAD
         /// Método que elimina una foto
         /// </summary>
         /// <param name="foto"></param>
@@ -193,9 +152,6 @@ namespace Icp.TiendaApi.Servicios
 
         /// <summary>
         /// Método que elimina un artículo
-=======
-        /// Elimina un artículo existente.
->>>>>>> f5ac5175b7ca767aa05453a8505ca4731e036e69
         /// </summary>
         /// <param name="IdArticulo"></param>
         /// <returns></returns>
@@ -229,11 +185,7 @@ namespace Icp.TiendaApi.Servicios
                 }
             }
 
-<<<<<<< HEAD
             if (articuloDB.EstadoArticulo == "Disponible" && almacenDB.Cantidad == 0)
-=======
-            if(articuloDB.EstadoArticulo == "Disponible" && almacenDB.Cantidad == 0)
->>>>>>> f5ac5175b7ca767aa05453a8505ca4731e036e69
             {
                 almacenDB.ArticuloAlmacen = null;
 
@@ -254,7 +206,6 @@ namespace Icp.TiendaApi.Servicios
 
             return Ok();
         }
-
 
     }
 }

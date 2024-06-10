@@ -52,21 +52,15 @@ namespace Icp.TiendaApi.BBDD
             modelBuilder.Entity<Articulo>(entity =>
             {
                 entity.HasKey(e => e.IdArticulo)
-                    .HasName("PK__ARTICULO__41ADBDE5DA0C7889");
+                    .HasName("PK__ARTICULO__41ADBDE5CB27BDBE");
 
                 entity.ToTable("ARTICULOS");
 
                 entity.Property(e => e.IdArticulo).HasColumnName("ID_ARTICULO");
 
-                entity.Property(e => e.Ancho)
-                    .IsRequired()
-                    .HasMaxLength(20)
-                    .HasColumnName("ANCHO");
+                entity.Property(e => e.Altura).HasColumnName("ALTURA");
 
-                entity.Property(e => e.Altura)
-                    .IsRequired()
-                    .HasMaxLength(20)
-                    .HasColumnName("ALTURA");
+                entity.Property(e => e.Ancho).HasColumnName("ANCHO");
 
                 entity.Property(e => e.Descripcion)
                     .IsRequired()
@@ -84,15 +78,9 @@ namespace Icp.TiendaApi.BBDD
 
                 entity.Property(e => e.Foto).HasColumnName("FOTO");
 
-                entity.Property(e => e.Peso)
-                     .IsRequired()
-                     .HasMaxLength(20)
-                     .HasColumnName("PESO");
+                entity.Property(e => e.Peso).HasColumnName("PESO");
 
-                entity.Property(e => e.Precio)
-                    .IsRequired()
-                    .HasMaxLength(20)
-                    .HasColumnName("PRECIO");
+                entity.Property(e => e.Precio).HasColumnName("PRECIO");
             });
 
             modelBuilder.Entity<Pedido>(entity =>
