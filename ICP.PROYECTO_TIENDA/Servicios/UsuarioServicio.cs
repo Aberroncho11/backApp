@@ -36,19 +36,19 @@ namespace Icp.TiendaApi.Servicios
 
             if (existeEmail == null)
             {
-                return BadRequest($"No existe un usuario con el email {usuarioCredencialesDTO.Email}");
+                return BadRequest(new { message = $"No existe un usuario con el email {usuarioCredencialesDTO.Email}" });
             }
 
             var usuarioDB = await context.Usuario.FirstOrDefaultAsync(x => x.Email == usuarioCredencialesDTO.Email
             && x.Password == usuarioCredencialesDTO.Password);
-            
+
             if (usuarioDB == null)
             {
-                return BadRequest("Login incorrecto el email no coincide con la contraseña puesta o la contraseña es incorrecta");
+                return BadRequest(new { mesaage = "Login incorrecto, el email no coincide con la contraseña puesta o la contraseña es incorrecta" });
             }
             else if (usuarioDB.EstadoUsuario == "Eliminado")
             {
-                return BadRequest("El usuario con el que se quiere acceder está eliminado");
+                return BadRequest(new { message = "El usuario con el que se quiere acceder está eliminado" });
             }
             else
             {
@@ -145,7 +145,7 @@ namespace Icp.TiendaApi.Servicios
         /// </summary>
         /// <param name="Nickname">El Id del usuario.</param>
         /// <returns>El usuario encontrado.</returns>
-        public async Task<ActionResult<UsuarioGetPorNicknameDTO>> GetByNicknameServicio(string Nickname)
+        public async Task<ActionResult<UsuarioDTO>> GetByNicknameServicio(string Nickname)
         {
             var usuarioDB = await context.Usuario.FirstOrDefaultAsync(x => x.Nickname == Nickname);
 
@@ -154,7 +154,7 @@ namespace Icp.TiendaApi.Servicios
                 return NotFound($"El usuario con el nickname {Nickname} no existe");
             }
 
-            return Ok(mapper.Map<UsuarioGetPorNicknameDTO>(usuarioDB));
+            return Ok(mapper.Map<UsuarioDTO>(usuarioDB));
         }
 
         /// <summary>

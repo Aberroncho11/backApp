@@ -13,9 +13,8 @@ namespace Icp.Tienda.Utilidades
     {
         public AutoMapperProfiles()
         {
-            CreateMap<Usuario, UsuarioDTO>();
+            CreateMap<Usuario, UsuarioDTO>().ReverseMap();
             CreateMap<Usuario, UsuarioPostDTO>().ReverseMap();
-            CreateMap<Usuario, UsuarioGetPorNicknameDTO>().ReverseMap();
 
             CreateMap<Articulo, ArticuloDTO>().ReverseMap();
             CreateMap<Articulo, ArticuloPostDTO>()

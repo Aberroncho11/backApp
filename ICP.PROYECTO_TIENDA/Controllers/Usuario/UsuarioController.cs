@@ -52,7 +52,7 @@ namespace Icp.TiendaApi.Controllers.User
 
         //VER USUARIOS POR Nickname
         [HttpGet("/verUsuarioPorNickname/{Nickname}")]
-        public async Task<ActionResult<UsuarioGetPorNicknameDTO>> Get(string Nickname)
+        public async Task<ActionResult<UsuarioDTO>> Get(string Nickname)
         {
             return await usuarioServicio.GetByNicknameServicio(Nickname);
         }
