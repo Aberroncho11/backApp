@@ -8,6 +8,8 @@ using Icp.TiendaApi.Servicios.Almacenador;
 using System.Linq.Dynamic.Core;
 using Icp.TiendaApi.Controllers.DTO;
 using Icp.TiendaApi.Controllers.DTO.Pedido;
+using Icp.TiendaApi.Controllers.DTO.Almacen;
+using Icp.TiendaApi.Controllers.DTO.Usuario;
 
 namespace Icp.TiendaApi.Servicios
 {
@@ -56,11 +58,65 @@ namespace Icp.TiendaApi.Servicios
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="IdEstanteria"></param>
+        /// <returns></returns>
+        public async Task<ActionResult<List<AlmacenDTO>>> GetEstanteriasVaciasServicio()
+        {
+            var estanteriasDB = await context.Almacen
+                .Where(x => x.ArticuloAlmacen == null).ToListAsync();
+
+            if (estanteriasDB.Count() == 0)
+            {
+                return NotFound(new { meesage = $"No hay estanterias vacías" });
+            }
+
+            return mapper.Map<List<AlmacenDTO>>(estanteriasDB);
+        }
+
+        /// <summary>
+        /// Método que devuelve un artículo por su id
+        /// </summary>
+        /// <param name="IdArticulo"></param>
+        /// <returns></returns>
+        public async Task<ActionResult<ArticuloDTO>> GetByIdServicio(int IdArticulo)
+        {
+            var articuloDB = await context.Articulo
+                .FirstOrDefaultAsync(x => x.IdArticulo == IdArticulo);
+
+            if (articuloDB == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(mapper.Map<ArticuloDTO>(articuloDB));
+        }
+        public async Task<ActionResult> MeterArticuloAEstanteriaServicio(int IdEstanteria, int IdArticulo)
+        {
+            var estanteriaDB = await context.Almacen.FirstOrDefaultAsync(x => x.IdEstanteria == IdEstanteria);
+
+            if (estanteriaDB == null)
+            {
+                return NotFound(new { message = $"La estanteria con el id {IdEstanteria} no existe" });
+            }
+
+            estanteriaDB.ArticuloAlmacen = IdArticulo;
+
+            context.Update(estanteriaDB);
+
+            await context.SaveChangesAsync();
+
+            return Ok(new { message = "Añadido a la estanteria con exito" });
+        }
+
+
+        /// <summary>
         /// Método que devuelve una lista de artículos por su nombre
         /// </summary>
         /// <param name="articuloPostDTO"></param>
         /// <returns></returns>
-        public async Task<ActionResult> PostServicio([FromForm] ArticuloPostDTO articuloPostDTO)
+        public async Task<ActionResult> PostServicio([FromForm] ArticuloPostDTO articuloPostDTO,[FromForm] AlmacenAddDTO almacenAddDTO)
         {
             var articuloDB = mapper.Map<Articulo>(articuloPostDTO);
 
@@ -79,12 +135,17 @@ namespace Icp.TiendaApi.Servicios
             context.Add(articuloDB);
             await context.SaveChangesAsync();
 
-            var almacenDB = new Almacen
-            {
-                ArticuloAlmacen = articuloDB.IdArticulo
-            };
+            var estanteriaDB = await context.Almacen.FirstOrDefaultAsync(x => x.IdEstanteria == almacenAddDTO.IdEstanteria);
 
-            context.Add(almacenDB);
+            if (estanteriaDB == null)
+            {
+                return NotFound(new { message = $"La estanteria con el id {almacenAddDTO.IdEstanteria} no existe" });
+            }
+
+            estanteriaDB.ArticuloAlmacen = articuloDB.IdArticulo;
+
+            estanteriaDB.Cantidad = almacenAddDTO.Cantidad;
+
             await context.SaveChangesAsync();
 
             return Ok();

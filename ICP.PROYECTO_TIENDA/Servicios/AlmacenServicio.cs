@@ -1,66 +1,27 @@
 ﻿using AutoMapper;
 using Icp.TiendaApi.BBDD;
 using Icp.TiendaApi.Controllers.DTO.Almacen;
+using Icp.TiendaApi.Controllers.DTO.Articulo;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
 namespace Icp.TiendaApi.Servicios
 {
-    // Clase que contiene los métodos de los servicios de la estantería
     public class AlmacenServicio : ControllerBase
     {
-        // Contexto de la base de datos
         private readonly TiendaContext context;
 
-        // Mapeador
         private readonly IMapper mapper;
 
-        // Constructor
-        public AlmacenServicio(TiendaContext context, IMapper mapper)
+        private ArticuloServicio articuloServicio;
+
+        public AlmacenServicio(TiendaContext context, IMapper mapper, ArticuloServicio articuloServicio)
         {
-            // Inicialización del contexto y del mapeador
             this.context = context;
             this.mapper = mapper;
+            this.articuloServicio = articuloServicio;
         }
-
-        //public async Task<List<StockDTO>> GetService()
-        //{
-        //    var shelfs = await context.Stocks.ToListAsync();
-
-        //    return mapper.Map<List<StockDTO>>(shelfs);
-        //}
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="IdEstanteria"></param>
-        /// <returns></returns>
-        public async Task<ActionResult> GetByIdServicio(int IdEstanteria)
-        {
-            var estanteriaDB = await context.Almacen
-                .FirstOrDefaultAsync(x => x.IdEstanteria == IdEstanteria);
-
-            if(estanteriaDB == null)
-            {
-                return NotFound($"La estanteria con el id {IdEstanteria} no existe");
-            }
-
-            return Ok();
-        }
-
-        //public async Task<ActionResult> PutService(StockCreacionDTO stockCreacionDTO, int IdShelf)
-        //{
-        //    var shelf = mapper.Map<Stock>(stockCreacionDTO);
-
-        //    shelf.IdShelf = IdShelf;
-
-        //    context.Update(shelf);
-
-        //    await context.SaveChangesAsync();
-
-        //    return NoContent();
-        //}
 
         // AÑADIR STOCK
         public async Task<ActionResult> AddServicio(AlmacenAddDTO almacenAddDTO)

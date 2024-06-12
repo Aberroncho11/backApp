@@ -2,6 +2,8 @@
 using Icp.TiendaApi.Controllers.DTO.Almacen;
 using Icp.TiendaApi.Servicios;
 using Icp.TiendaApi.Controllers.DTO.Usuario;
+using Icp.TiendaApi.BBDD.Entidades;
+
 namespace Icp.TiendaApi.Controllers.Almacen
 {
     [ApiController]
@@ -13,14 +15,6 @@ namespace Icp.TiendaApi.Controllers.Almacen
         public AlmacenController(AlmacenServicio almacenServicio)
         {
             this.almacenServicio = almacenServicio;
-        }
-
-        // VER ESTANTERIA POR ID
-        [HttpGet("/verEstanteriaPorId/{IdEstanteria:int}")]
-        //[Authorize(Roles = "Administrador, Gestor")]
-        public async Task<ActionResult> Get(int IdEstanteria)
-        {
-            return await almacenServicio.GetByIdServicio(IdEstanteria);
         }
 
         // AÑADIR STOCK

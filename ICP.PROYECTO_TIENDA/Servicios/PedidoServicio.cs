@@ -159,6 +159,8 @@ namespace Icp.TiendaApi.Servicios
                     // Establecer el estado del artículo como "Eliminado"
                     articuloDB.EstadoArticulo = "Eliminado";
 
+                    estanteriaDB.ArticuloAlmacen = null;
+
                     // Actualizar el artículo en la base de datos
                     await context.SaveChangesAsync();
                 }

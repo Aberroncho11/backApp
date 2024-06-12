@@ -1,7 +1,7 @@
-﻿using Icp.TiendaApi.Controllers.DTO.Articulo;
+﻿using Icp.TiendaApi.Controllers.DTO.Almacen;
+using Icp.TiendaApi.Controllers.DTO.Articulo;
 using Icp.TiendaApi.Servicios;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq.Dynamic.Core;
 
 
 namespace Icp.TiendaApi.Controllers.Articulo
@@ -32,11 +32,21 @@ namespace Icp.TiendaApi.Controllers.Articulo
             return await articuloServicio.GetByNombreServicio(Nombre);
         }
 
+        /// <summary>
+        /// Método que devuelve una lista de estanterías vacías
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("/verEstanteriasVacias")]
+        public async Task<ActionResult<List<AlmacenDTO>>> GetEstanteriasVacias()
+        {
+            return await articuloServicio.GetEstanteriasVaciasServicio();
+        }
+
         //CREAR ARTÍCULO
         [HttpPost("/crearArticulo")]
-        public async Task<ActionResult> Post([FromForm] ArticuloPostDTO articuloPostDTO)
+        public async Task<ActionResult> Post([FromForm] ArticuloPostDTO articuloPostDTO,[FromForm] AlmacenAddDTO almacenAddDTO)
         {
-            return await articuloServicio.PostServicio(articuloPostDTO);
+            return await articuloServicio.PostServicio(articuloPostDTO, almacenAddDTO);
         }
 
         //MODIFICAR ARTÍCULO
