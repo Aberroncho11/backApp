@@ -32,7 +32,6 @@ namespace Icp.Tienda.Utilidades
             CreateMap<Producto, ProductoDTO>();
 
             CreateMap<Almacen, AlmacenDTO>();
-            CreateMap<Almacen, AlmacenCreacionDTO>();
         }
 
         private List<Producto> MapItem(PedidoPostDTO pedidoPostDTO, Pedido pedido)

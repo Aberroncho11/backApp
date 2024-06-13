@@ -7,63 +7,24 @@ using System.Reflection;
 
 namespace Icp.TiendaApi.Servicios
 {
-    // Clase que contiene los métodos de los servicios de la estantería
     public class AlmacenServicio : ControllerBase
     {
-        // Contexto de la base de datos
         private readonly TiendaContext context;
 
-        // Mapeador
         private readonly IMapper mapper;
 
-        // Constructor
         public AlmacenServicio(TiendaContext context, IMapper mapper)
         {
-            // Inicialización del contexto y del mapeador
             this.context = context;
             this.mapper = mapper;
         }
 
-        //public async Task<List<StockDTO>> GetService()
-        //{
-        //    var shelfs = await context.Stocks.ToListAsync();
-
-        //    return mapper.Map<List<StockDTO>>(shelfs);
-        //}
-
         /// <summary>
-        /// 
+        /// Añade un artículo a la estantería.
         /// </summary>
-        /// <param name="IdEstanteria"></param>
+        /// <param name="almacenAddDTO"></param>
         /// <returns></returns>
-        public async Task<ActionResult> GetByIdServicio(int IdEstanteria)
-        {
-            var estanteriaDB = await context.Almacen
-                .FirstOrDefaultAsync(x => x.IdEstanteria == IdEstanteria);
-
-            if(estanteriaDB == null)
-            {
-                return NotFound($"La estanteria con el id {IdEstanteria} no existe");
-            }
-
-            return Ok();
-        }
-
-        //public async Task<ActionResult> PutService(StockCreacionDTO stockCreacionDTO, int IdShelf)
-        //{
-        //    var shelf = mapper.Map<Stock>(stockCreacionDTO);
-
-        //    shelf.IdShelf = IdShelf;
-
-        //    context.Update(shelf);
-
-        //    await context.SaveChangesAsync();
-
-        //    return NoContent();
-        //}
-
-        // AÑADIR STOCK
-        public async Task<ActionResult> AddServicio(AlmacenAddDTO almacenAddDTO)
+        public async Task<ActionResult> AddAlmacenServicio(AlmacenAddDTO almacenAddDTO)
         {
             var estanteriaDB = await context.Almacen.FirstOrDefaultAsync(x => x.IdEstanteria == almacenAddDTO.IdEstanteria);
 
@@ -132,21 +93,5 @@ namespace Icp.TiendaApi.Servicios
 
             return Ok();
         }
-
-        //public async Task<ActionResult> DeleteServicio(int ArticuloAlmacen)
-        //{
-        //    var existe = await context.Almacen.AnyAsync(x => x.ArticuloAlmacen == ArticuloAlmacen);
-
-        //    if (!existe)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    context.Remove(new Almacen() { ArticuloAlmacen = ArticuloAlmacen });
-
-        //    await context.SaveChangesAsync();
-
-        //    return Ok();
-        //}
     }
 }

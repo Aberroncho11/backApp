@@ -6,6 +6,7 @@ namespace Icp.TiendaApi.Controllers.DTO.Usuario
     public class UsuarioPostDTO
     {
         [Required]
+        [FiltroPerfil]
         public int Perfil { get; set; }
         [Required]
         [FiltroPassword]

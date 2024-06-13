@@ -6,8 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Icp.TiendaApi.BBDD.Entidades;
 using Icp.TiendaApi.Servicios.Almacenador;
 using System.Linq.Dynamic.Core;
-using Icp.TiendaApi.Controllers.DTO;
-using Icp.TiendaApi.Controllers.DTO.Pedido;
+using Icp.TiendaApi.Controllers.DTO.Almacen;
 
 namespace Icp.TiendaApi.Servicios
 {
@@ -34,6 +33,11 @@ namespace Icp.TiendaApi.Servicios
             var articulosDB = await context.Articulo
                 .Include(x => x.Almacen).ToListAsync();
 
+            if(articulosDB.Count() == 0)
+            {
+                return NotFound(new { message = "No hay articulos"});
+            }
+
             return mapper.Map<List<ArticuloAlmacenDTO>>(articulosDB);
         }
 
@@ -49,10 +53,28 @@ namespace Icp.TiendaApi.Servicios
 
             if (articuloDB == null)
             {
-                return NotFound();
+                return NotFound(new { message = $"El articulo con el nombre {Nombre} no existe"});
             }
 
             return Ok(mapper.Map<ArticuloDTO>(articuloDB));
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="IdEstanteria"></param>
+        /// <returns></returns>
+        public async Task<ActionResult<List<AlmacenDTO>>> GetEstanteriasVaciasServicio()
+        {
+            var estanteriasDB = await context.Almacen
+                .Where(x => x.ArticuloAlmacen == null).ToListAsync();
+
+            if (estanteriasDB.Count() == 0)
+            {
+                return NotFound(new { meesage = $"No hay estanterias vacías" });
+            }
+
+            return mapper.Map<List<AlmacenDTO>>(estanteriasDB);
         }
 
         /// <summary>
@@ -60,7 +82,7 @@ namespace Icp.TiendaApi.Servicios
         /// </summary>
         /// <param name="articuloPostDTO"></param>
         /// <returns></returns>
-        public async Task<ActionResult> PostServicio([FromForm] ArticuloPostDTO articuloPostDTO)
+        public async Task<ActionResult> PostServicio([FromForm] ArticuloPostDTO articuloPostDTO, [FromForm] AlmacenDTO almacenDTO)
         {
             var articuloDB = mapper.Map<Articulo>(articuloPostDTO);
 
@@ -79,12 +101,17 @@ namespace Icp.TiendaApi.Servicios
             context.Add(articuloDB);
             await context.SaveChangesAsync();
 
-            var almacenDB = new Almacen
-            {
-                ArticuloAlmacen = articuloDB.IdArticulo
-            };
+            var estanteriaDB = await context.Almacen.FirstOrDefaultAsync(x => x.IdEstanteria == almacenDTO.IdEstanteria);
 
-            context.Add(almacenDB);
+            if (estanteriaDB == null)
+            {
+                return NotFound(new { message = $"La estanteria con el id {almacenDTO.IdEstanteria} no existe" });
+            }
+
+            estanteriaDB.ArticuloAlmacen = articuloDB.IdArticulo;
+
+            estanteriaDB.Cantidad = almacenDTO.Cantidad;
+
             await context.SaveChangesAsync();
 
             return Ok();

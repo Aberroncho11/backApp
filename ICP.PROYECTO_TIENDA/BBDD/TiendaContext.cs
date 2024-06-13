@@ -43,10 +43,10 @@ namespace Icp.TiendaApi.BBDD
 
                 entity.Property(e => e.Cantidad).HasColumnName("CANTIDAD");
 
-                entity.HasOne(d => d.ArticuloAlmacenNavigation)
-                    .WithMany(p => p.Almacen)
-                    .HasForeignKey(d => d.ArticuloAlmacen)
-                    .HasConstraintName("FK__ALMACEN__ARTICUL__4B380934");
+                entity.HasOne<Articulo>() 
+                  .WithMany(a => a.Almacen)
+                  .HasForeignKey(e => e.ArticuloAlmacen)
+                  .HasConstraintName("FK__ALMACEN__ARTICUL__4B380934");
             });
 
             modelBuilder.Entity<Articulo>(entity =>

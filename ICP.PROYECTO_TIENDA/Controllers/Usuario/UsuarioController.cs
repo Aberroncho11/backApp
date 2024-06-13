@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Icp.TiendaApi.Controllers.DTO.Usuario;
 using Icp.TiendaApi.Servicios;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Text;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 
 namespace Icp.TiendaApi.Controllers.User
@@ -29,56 +28,89 @@ namespace Icp.TiendaApi.Controllers.User
             return await usuarioServicio.LoginServicio(usuarioCredencialesDTO);
         }
 
+        /// <summary>
+        /// Método que devuelve una lista de usuarios
+        /// </summary>
+        /// <param name="Email"></param>
+        /// <returns></returns>
         [HttpGet("/checkEmail/{Email}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Administrador")]
         public async Task<ActionResult<bool>> CheckEmail(string Email)
         {
             return await usuarioServicio.CheckEmailService(Email);
         }
 
+        /// <summary>
+        /// Método que devuelve una lista de usuarios
+        /// </summary>
+        /// <param name="Nickname"></param>
+        /// <returns></returns>
         [HttpGet("/checkNickname/{Nickname}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Administrador")]
         public async Task<ActionResult<bool>> CheckNickname(string Nickname)
         {
             return await usuarioServicio.CheckNicknameService(Nickname);
         }
 
 
-        // VER USUARIOS
+        /// <summary>
+        /// Método que devuelve una lista de usuarios
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("/verUsuarios")]
-        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Administrador")]
-        public async Task<ActionResult<List<UsuarioDTO>>> Get()
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Administrador")]
+        public async Task<ActionResult<List<UsuarioDTO>>> GetUsuario()
         {
             return await usuarioServicio.GetServicio();
         }
 
-        //VER USUARIOS POR Nickname
+        /// <summary>
+        /// Método que devuelve un usuario por su nickname
+        /// </summary>
+        /// <param name="Nickname"></param>
+        /// <returns></returns>
         [HttpGet("/verUsuarioPorNickname/{Nickname}")]
-        public async Task<ActionResult<UsuarioDTO>> Get(string Nickname)
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Administrador")]
+        public async Task<ActionResult<UsuarioDTO>> GetUsuarioPorNickname(string Nickname)
         {
             return await usuarioServicio.GetByNicknameServicio(Nickname);
         }
 
-        // CREAR USUARIOS
+        /// <summary>
+        /// Método que crea un usuario
+        /// </summary>
+        /// <param name="userCreacionDTO"></param>
+        /// <returns></returns>
         [HttpPost("/crearUsuario")]
-        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Administrador")]
-        public async Task<ActionResult> Post([FromForm] UsuarioPostDTO userCreacionDTO)
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Administrador")]
+        public async Task<ActionResult> PostUsuario([FromForm] UsuarioPostDTO userCreacionDTO)
         {
             return await usuarioServicio.PostServicio(userCreacionDTO);
         }
 
-        // MODIFICAR USUARIOS
+        /// <summary>
+        /// Método que modifica un usuario
+        /// </summary>
+        /// <param name="userCreacionDTO"></param>
+        /// <param name="Nickname"></param>
+        /// <returns></returns>
         [HttpPut("/modificarUsuario/{Nickname}")]
-        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Administrador")]
-        public async Task<ActionResult> Put([FromForm] UsuarioPostDTO userCreacionDTO, string Nickname)
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Administrador")]
+        public async Task<ActionResult> PutUsuario([FromForm] UsuarioPostDTO userCreacionDTO, string Nickname)
         {
             return await usuarioServicio.PutServicio(userCreacionDTO, Nickname);
         }
 
-        // ELIMINAR USUARIOS
+        /// <summary>
+        /// Método que elimina un usuario
+        /// </summary>
+        /// <param name="Nickname"></param>
+        /// <returns></returns>
         [HttpDelete("/eliminarUsuario/{IdUsuario:int}")]
-        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Administrador")]
-        public async Task<ActionResult> Delete(int IdUsuario)
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Administrador")]
+        public async Task<ActionResult> DeleteUsuario(string Nickname)
         {
-            return await usuarioServicio.DeleteServicio(IdUsuario);
+            return await usuarioServicio.DeleteServicio(Nickname);
         }
     }
 }

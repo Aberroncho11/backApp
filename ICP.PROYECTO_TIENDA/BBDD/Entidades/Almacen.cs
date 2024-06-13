@@ -7,7 +7,5 @@ namespace Icp.TiendaApi
         public int IdEstanteria { get; set; }
         public int? ArticuloAlmacen { get; set; }
         public int Cantidad { get; set; }
-
-        public Articulo ArticuloAlmacenNavigation { get; set; }
     }
 }

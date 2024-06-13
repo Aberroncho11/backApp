@@ -137,6 +137,11 @@ namespace Icp.TiendaApi.Servicios
         {
             var usuariosDB = await context.Usuario.ToListAsync();
 
+            if(usuariosDB.Count() == 0)
+            {
+                return NotFound(new { message = "No hay usuarios" });
+            }
+
             return mapper.Map<List<UsuarioDTO>>(usuariosDB);
         }
 
@@ -168,14 +173,14 @@ namespace Icp.TiendaApi.Servicios
 
             if (existeNickname != null)
             {
-                return BadRequest($"Ya existe un usuario con el nombre {usuarioPostDTO.Nickname}");
+                return BadRequest(new { message = $"Ya existe un usuario con el nombre {usuarioPostDTO.Nickname}" });
             }
 
             var existeEmail = await context.Usuario.FirstOrDefaultAsync(x => x.Email == usuarioPostDTO.Email);
 
             if (existeEmail != null)
             {
-                return BadRequest($"Ya existe un usuario con el email {usuarioPostDTO.Email}");
+                return BadRequest(new { message = $"Ya existe un usuario con el email {usuarioPostDTO.Email}" });
             }
 
             var usuarioDB = mapper.Map<Usuario>(usuarioPostDTO);
@@ -186,7 +191,7 @@ namespace Icp.TiendaApi.Servicios
 
             await context.SaveChangesAsync();
 
-            return Ok();
+            return Ok( new { message = "Usuario creado"});
         }
 
         /// <summary>
@@ -201,7 +206,7 @@ namespace Icp.TiendaApi.Servicios
 
             if (usuarioDB == null)
             {
-                return NotFound($"El usuario con el Nickname ${Nickname} no existe");
+                return NotFound(new { message = $"El usuario con el Nickname ${Nickname} no existe" });
             }
 
             usuarioDB = mapper.Map(usuarioPostDTO, usuarioDB);
@@ -210,7 +215,7 @@ namespace Icp.TiendaApi.Servicios
 
             await context.SaveChangesAsync();
 
-            return Ok();
+            return Ok(new { message = "Usuario modificado" });
         }
 
         /// <summary>
@@ -218,24 +223,24 @@ namespace Icp.TiendaApi.Servicios
         /// </summary>
         /// <param name="IdUsuario">El Id del usuario a eliminar.</param>
         /// <returns>El resultado de la operación.</returns>
-        public async Task<ActionResult> DeleteServicio(int IdUsuario)
+        public async Task<ActionResult> DeleteServicio(string Nickname)
         {
-            var usuarioDB = await context.Usuario.FirstOrDefaultAsync(x => x.IdUsuario == IdUsuario);
+            var usuarioDB = await context.Usuario.FirstOrDefaultAsync(x => x.Nickname == Nickname);
 
             if (usuarioDB == null)
             {
-                return NotFound($"El usuario con el id {IdUsuario} no existe");
+                return NotFound(new { meesage = $"El usuario con el nickname {Nickname} no existe" });
             }
             if (usuarioDB.EstadoUsuario == "Eliminado")
             {
-                return BadRequest($"El usuario con el id {IdUsuario} ya está eliminado");
+                return BadRequest(new { meesage = $"El usuario con el nickname {Nickname} ya está eliminado" });
             }
 
             usuarioDB.EstadoUsuario = "Eliminado";
 
             await context.SaveChangesAsync();
 
-            return Ok();
+            return Ok(new { message = "Usuario eliminado"});
         }
     }
 }
