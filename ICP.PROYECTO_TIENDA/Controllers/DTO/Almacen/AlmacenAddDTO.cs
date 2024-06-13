@@ -5,7 +5,7 @@ namespace Icp.TiendaApi.Controllers.DTO.Almacen
     public class AlmacenAddDTO
     {
         [Required]
-        public int IdEstanteria { get; set; }
+        public int ArticuloAlmacen { get; set; }
         [Required]
         public int Cantidad { get; set; }
     }

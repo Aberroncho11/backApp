@@ -169,6 +169,8 @@ namespace Icp.TiendaApi.BBDD
 
                 entity.Property(e => e.Cantidad).HasColumnName("CANTIDAD");
 
+                entity.Property(e => e.NombreArticulo).HasColumnName("NOMBRE_ARTICULO");
+
                 entity.HasOne(d => d.Articulo)
                     .WithMany(p => p.Producto)
                     .HasForeignKey(d => d.ArticuloId)

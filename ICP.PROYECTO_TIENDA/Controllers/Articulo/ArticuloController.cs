@@ -9,7 +9,7 @@ namespace Icp.TiendaApi.Controllers.Articulo
 {
     [ApiController]
     [Route("api/articulos")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Administrador")]
+    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Administrador")]
     public class ArticuloController : ControllerBase
     {
         private readonly ArticuloServicio articuloServicio;
@@ -41,6 +41,29 @@ namespace Icp.TiendaApi.Controllers.Articulo
         }
 
         /// <summary>
+        /// Método que devuelve un artículo por su nombre
+        /// </summary>
+        /// <param name="Nombre"></param>
+        /// <returns></returns>
+        [HttpGet("/verArticuloPorId/{IdArticulo:int}")]
+        public async Task<ActionResult<ArticuloDTO>> GetArticuloPorId(int IdArticulo)
+        {
+            return await articuloServicio.GetByIdServicio(IdArticulo);
+        }
+
+        /// <summary>
+        /// Método que devuelve una lista de usuarios
+        /// </summary>
+        /// <param name="Nickname"></param>
+        /// <returns></returns>
+        [HttpGet("/checkNombre/{Nombre}")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Administrador")]
+        public async Task<ActionResult<bool>> CheckNombre(string Nombre)
+        {
+            return await articuloServicio.CheckNombreServicio(Nombre);
+        }
+
+        /// <summary>
         /// Método que devuelve una lista de estanterías vacías
         /// </summary>
         /// <returns></returns>
@@ -48,6 +71,16 @@ namespace Icp.TiendaApi.Controllers.Articulo
         public async Task<ActionResult<List<AlmacenDTO>>> GetEstanteriasVacias()
         {
             return await articuloServicio.GetEstanteriasVaciasServicio();
+        }
+
+        /// <summary>
+        /// Método que devuelve una lista de estanterías vacías
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("/verEstanteriasConArticulos")]
+        public async Task<ActionResult<List<AlmacenDTO>>> GetEstanteriasConArticulos()
+        {
+            return await articuloServicio.GetEstanteriasConArticuloServicio();
         }
 
         /// <summary>

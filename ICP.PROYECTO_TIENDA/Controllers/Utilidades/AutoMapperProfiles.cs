@@ -31,7 +31,8 @@ namespace Icp.Tienda.Utilidades
 
             CreateMap<Producto, ProductoDTO>();
 
-            CreateMap<Almacen, AlmacenDTO>();
+            CreateMap<Almacen, AlmacenDTO>().ReverseMap();
+            CreateMap<Almacen, AlmacenAddDTO>().ReverseMap();
         }
 
         private List<Producto> MapItem(PedidoPostDTO pedidoPostDTO, Pedido pedido)

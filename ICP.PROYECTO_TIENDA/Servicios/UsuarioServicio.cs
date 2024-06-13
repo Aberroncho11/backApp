@@ -83,7 +83,8 @@ namespace Icp.TiendaApi.Servicios
             List<Claim> claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Role, rol),
-                new Claim("IdUsuario", usuarioDTO.IdUsuario.ToString())
+                new Claim("IdUsuario", usuarioDTO.IdUsuario.ToString()),
+                new Claim("Nickname", usuarioDTO.Nickname)
             };
 
             var llave = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["llavejwt"]));
@@ -104,6 +105,11 @@ namespace Icp.TiendaApi.Servicios
             return respuestaAutenticacionDTO;
         }
 
+        /// <summary>
+        /// Comprueba si un email ya está en uso.
+        /// </summary>
+        /// <param name="Email"></param>
+        /// <returns></returns>
         public async Task<ActionResult<bool>> CheckEmailService(string Email)
         {
             var userDB = await context.Usuario.FirstOrDefaultAsync(x => x.Email == Email);
@@ -116,6 +122,11 @@ namespace Icp.TiendaApi.Servicios
             return Ok(false);
         }
 
+        /// <summary>
+        /// Comprueba si un nickname ya está en uso.
+        /// </summary>
+        /// <param name="Nickname"></param>
+        /// <returns></returns>
         public async Task<ActionResult<bool>> CheckNicknameService(string Nickname)
         {
             var userDB = await context.Usuario.FirstOrDefaultAsync(x => x.Nickname == Nickname);

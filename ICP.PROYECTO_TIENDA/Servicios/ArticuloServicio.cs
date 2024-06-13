@@ -42,9 +42,9 @@ namespace Icp.TiendaApi.Servicios
         }
 
         /// <summary>
-        /// Método que devuelve un artículo por su id
+        /// Método que devuelve un artículo por su nombre
         /// </summary>
-        /// <param name="IdArticulo"></param>
+        /// <param name="Nombre"></param>
         /// <returns></returns>
         public async Task<ActionResult<ArticuloDTO>> GetByNombreServicio(string Nombre)
         {
@@ -60,6 +60,42 @@ namespace Icp.TiendaApi.Servicios
         }
 
         /// <summary>
+        /// Método que devuelve un artículo por su id
+        /// </summary>
+        /// <param name="IdArticulo"></param>
+        /// <returns></returns>
+        public async Task<ActionResult<ArticuloDTO>> GetByIdServicio(int IdArticulo)
+        {
+            var articuloDB = await context.Articulo
+                .FirstOrDefaultAsync(x => x.IdArticulo == IdArticulo);
+
+            if (articuloDB == null)
+            {
+                return NotFound(new { message = $"El articulo con el id {IdArticulo} no existe" });
+            }
+
+            return Ok(mapper.Map<ArticuloDTO>(articuloDB));
+        }
+
+        /// <summary>
+        /// Método que devuelve un artículo por su id
+        /// </summary>
+        /// <param name="Nombre"></param>
+        /// <returns></returns>
+        public async Task<ActionResult<bool>> CheckNombreServicio(string Nombre)
+        {
+            var articuloDB = await context.Articulo
+                .FirstOrDefaultAsync(x => x.Nombre == Nombre);
+
+            if (articuloDB != null)
+            {
+                return Ok(true);
+            }
+
+            return Ok(false);
+        }
+
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="IdEstanteria"></param>
@@ -72,6 +108,24 @@ namespace Icp.TiendaApi.Servicios
             if (estanteriasDB.Count() == 0)
             {
                 return NotFound(new { meesage = $"No hay estanterias vacías" });
+            }
+
+            return mapper.Map<List<AlmacenDTO>>(estanteriasDB);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="IdEstanteria"></param>
+        /// <returns></returns>
+        public async Task<ActionResult<List<AlmacenDTO>>> GetEstanteriasConArticuloServicio()
+        {
+            var estanteriasDB = await context.Almacen
+                .Where(x => x.ArticuloAlmacen != null).ToListAsync();
+
+            if (estanteriasDB.Count() == 0)
+            {
+                return NotFound(new { meesage = $"No hay estanterias con artículo" });
             }
 
             return mapper.Map<List<AlmacenDTO>>(estanteriasDB);

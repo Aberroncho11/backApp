@@ -18,6 +18,17 @@ namespace Icp.TiendaApi.Controllers.Almacen
         }
 
         /// <summary>
+        /// Método que devuelve una lista de estanterías
+        /// </summary>
+        /// <param name="ArticuloAlmacen"></param>
+        /// <returns></returns>
+        [HttpGet("/verEstanteriaPorArticulo/{ArticuloAlmacen:int}")]
+        public async Task<ActionResult<AlmacenDTO>> GetPorArticuloAlmacen(int ArticuloAlmacen)
+        {
+            return await almacenServicio.GetPorArticuloAlmacen(ArticuloAlmacen);
+        }
+
+        /// <summary>
         /// Añadir cantidad a un articulo del almacen
         /// </summary>
         /// <param name="almacenAddDTO"></param>

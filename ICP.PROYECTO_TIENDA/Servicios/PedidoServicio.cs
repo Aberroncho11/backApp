@@ -70,10 +70,6 @@ namespace Icp.TiendaApi.Servicios
                     return BadRequest(new { message = "Uno de los artículos enviados está eliminado" });
                 }
             }
-            if (pedidoPostDTO.Articulos.Count != articulosDB.Count)
-            {
-                return BadRequest(new { message = "No existe uno de los artículos enviados" });
-            }
 
             var pedidoDB = new Pedido()
             {
@@ -91,7 +87,8 @@ namespace Icp.TiendaApi.Servicios
                 var pedidoProducto = new Producto
                 {
                     ArticuloId = productoDTO.ArticuloId,
-                    Cantidad = productoDTO.Cantidad
+                    Cantidad = productoDTO.Cantidad,
+                    NombreArticulo = productoDTO.NombreArticulo
                 };
 
                 pedidoDB.Producto.Add(pedidoProducto);
