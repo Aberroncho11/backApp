@@ -8,8 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Icp.TiendaApi.Controllers.Articulo
 {
     [ApiController]
-    [Route("api/articulos")]
-    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Administrador")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class ArticuloController : ControllerBase
     {
         private readonly ArticuloServicio articuloServicio;
@@ -46,6 +45,7 @@ namespace Icp.TiendaApi.Controllers.Articulo
         /// <param name="Nombre"></param>
         /// <returns></returns>
         [HttpGet("/verArticuloPorId/{IdArticulo:int}")]
+        [Authorize(Roles = "Administrador, Gestor")]
         public async Task<ActionResult<ArticuloDTO>> GetArticuloPorId(int IdArticulo)
         {
             return await articuloServicio.GetByIdServicio(IdArticulo);
@@ -57,7 +57,7 @@ namespace Icp.TiendaApi.Controllers.Articulo
         /// <param name="Nickname"></param>
         /// <returns></returns>
         [HttpGet("/checkNombre/{Nombre}")]
-        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Administrador")]
+        [Authorize(Roles = "Administrador")]
         public async Task<ActionResult<bool>> CheckNombre(string Nombre)
         {
             return await articuloServicio.CheckNombreServicio(Nombre);
@@ -68,6 +68,7 @@ namespace Icp.TiendaApi.Controllers.Articulo
         /// </summary>
         /// <returns></returns>
         [HttpGet("/verEstanteriasVacias")]
+        [Authorize(Roles = "Administrador")]
         public async Task<ActionResult<List<AlmacenDTO>>> GetEstanteriasVacias()
         {
             return await articuloServicio.GetEstanteriasVaciasServicio();
@@ -89,6 +90,7 @@ namespace Icp.TiendaApi.Controllers.Articulo
         /// <param name="articuloPostDTO"></param>
         /// <returns></returns>
         [HttpPost("/crearArticulo")]
+        [Authorize(Roles = "Administrador")]
         public async Task<ActionResult> PostArticulo([FromForm] ArticuloPostDTO articuloPostDTO, [FromForm] AlmacenDTO almacenDTO)
         {
             return await articuloServicio.PostServicio(articuloPostDTO, almacenDTO);
@@ -101,9 +103,10 @@ namespace Icp.TiendaApi.Controllers.Articulo
         /// <param name="Nombre"></param>
         /// <returns></returns>
         [HttpPut("/modificarArticulo/{Nombre}")]
-        public async Task<ActionResult> PutArticulo([FromForm] ArticuloPutDTO articuloPutDTO, string Nombre)
+        [Authorize(Roles = "Administrador")]
+        public async Task<ActionResult> PutArticulo([FromForm] ArticuloPutDTO articuloPutDTO, [FromForm] AlmacenDTO? almacenDTO, string Nombre)
         {
-            return await articuloServicio.PutServicio(articuloPutDTO, Nombre);
+            return await articuloServicio.PutServicio(articuloPutDTO, almacenDTO, Nombre);
         }
 
         /// <summary>
@@ -112,6 +115,7 @@ namespace Icp.TiendaApi.Controllers.Articulo
         /// <param name="foto"></param>
         /// <returns></returns>
         [HttpDelete("/borrarFoto/{foto}")]
+        [Authorize(Roles = "Administrador")]
         public async Task<ActionResult> DeleteFoto(string foto)
         {
             return await articuloServicio.DeleteFotoServicio(foto);
@@ -123,6 +127,7 @@ namespace Icp.TiendaApi.Controllers.Articulo
         /// <param name="Nombre"></param>
         /// <returns></returns>
         [HttpDelete("/eliminarArticulo/{Nombre}")]
+        [Authorize(Roles = "Administrador")]
         public async Task<ActionResult> DeleteArticulo(string Nombre)
         {
             return await articuloServicio.DeleteServicio(Nombre);

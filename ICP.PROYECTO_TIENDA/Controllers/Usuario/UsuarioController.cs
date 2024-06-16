@@ -34,7 +34,8 @@ namespace Icp.TiendaApi.Controllers.User
         /// <param name="Email"></param>
         /// <returns></returns>
         [HttpGet("/checkEmail/{Email}")]
-        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Administrador")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Administrador")]
+
         public async Task<ActionResult<bool>> CheckEmail(string Email)
         {
             return await usuarioServicio.CheckEmailService(Email);
@@ -46,7 +47,7 @@ namespace Icp.TiendaApi.Controllers.User
         /// <param name="Nickname"></param>
         /// <returns></returns>
         [HttpGet("/checkNickname/{Nickname}")]
-        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Administrador")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Administrador")]
         public async Task<ActionResult<bool>> CheckNickname(string Nickname)
         {
             return await usuarioServicio.CheckNicknameService(Nickname);
@@ -96,9 +97,9 @@ namespace Icp.TiendaApi.Controllers.User
         /// <returns></returns>
         [HttpPut("/modificarUsuario/{Nickname}")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Administrador")]
-        public async Task<ActionResult> PutUsuario([FromForm] UsuarioPostDTO userCreacionDTO, string Nickname)
+        public async Task<ActionResult> PutUsuario([FromForm] UsuarioPutDTO usuarioPutDTO, string Nickname)
         {
-            return await usuarioServicio.PutServicio(userCreacionDTO, Nickname);
+            return await usuarioServicio.PutServicio(usuarioPutDTO, Nickname);
         }
 
         /// <summary>
@@ -106,7 +107,7 @@ namespace Icp.TiendaApi.Controllers.User
         /// </summary>
         /// <param name="Nickname"></param>
         /// <returns></returns>
-        [HttpDelete("/eliminarUsuario/{IdUsuario:int}")]
+        [HttpDelete("/eliminarUsuario/{Nickname}")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Administrador")]
         public async Task<ActionResult> DeleteUsuario(string Nickname)
         {

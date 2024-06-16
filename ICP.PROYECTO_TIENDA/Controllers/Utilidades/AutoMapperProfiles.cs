@@ -15,6 +15,7 @@ namespace Icp.Tienda.Utilidades
         {
             CreateMap<Usuario, UsuarioDTO>().ReverseMap();
             CreateMap<Usuario, UsuarioPostDTO>().ReverseMap();
+            CreateMap<Usuario, UsuarioPutDTO>().ReverseMap();
 
             CreateMap<Articulo, ArticuloDTO>().ReverseMap();
             CreateMap<Articulo, ArticuloPostDTO>()

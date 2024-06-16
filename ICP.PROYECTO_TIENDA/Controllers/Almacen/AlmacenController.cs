@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace Icp.TiendaApi.Controllers.Almacen
 {
     [ApiController]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Administrador, Gestor")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class AlmacenController : ControllerBase
     {
         private readonly AlmacenServicio almacenServicio;
@@ -34,6 +34,7 @@ namespace Icp.TiendaApi.Controllers.Almacen
         /// <param name="almacenAddDTO"></param>
         /// <returns></returns>
         [HttpPatch("/addAlmacen")]
+        [Authorize(Roles = "Administrador, Gestor")]
         public async Task<ActionResult> AddAlmacen(AlmacenAddDTO almacenAddDTO)
         {
             return await almacenServicio.AddAlmacenServicio(almacenAddDTO);

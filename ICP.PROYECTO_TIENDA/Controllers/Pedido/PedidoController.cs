@@ -35,7 +35,6 @@ namespace Icp.TiendaApi.Controllers.Pedido
         /// <param name="pedidoCreacionDTO"></param>
         /// <returns></returns>
         [HttpPost("/crearPedido")]
-        [Authorize(Roles = "Administrador, Gestor, Operador")]
         public async Task<ActionResult> PostPedido(PedidoPostDTO pedidoCreacionDTO)
         {
             return await pedidoServicio.PostServicio(pedidoCreacionDTO);

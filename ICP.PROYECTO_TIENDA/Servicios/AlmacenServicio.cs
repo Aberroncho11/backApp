@@ -48,18 +48,18 @@ namespace Icp.TiendaApi.Servicios
 
             if (estanteriaDB == null)
             {
-                return NotFound($"La estanteria con el articulo {almacenAddDTO.ArticuloAlmacen} no existe");
+                return NotFound(new { message = "La estanteria con el nombre del articulo pasado no existe" });
             }
 
             var articuloDB = await context.Articulo.FirstOrDefaultAsync(x => x.IdArticulo == estanteriaDB.ArticuloAlmacen);
 
             if (articuloDB.EstadoArticulo == "Pendiente de eliminar")
             {
-                return BadRequest("No se puede añadir a la estantería de este artículo porque se va a eliminar");
+                return BadRequest(new { message = "No se puede añadir a la estantería de este artículo porque se va a eliminar" });
             }
             else if(articuloDB.EstadoArticulo == "Eliminado")
             {
-                return BadRequest("No se puede añadir a la estantería de este artículo porque está eliminado");
+                return BadRequest(new { message = "No se puede añadir a la estantería de este artículo porque está eliminado" });
             }
 
             estanteriaDB.Cantidad += almacenAddDTO.Cantidad;

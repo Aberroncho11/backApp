@@ -211,7 +211,7 @@ namespace Icp.TiendaApi.Servicios
         /// <param name="usuarioPostDTO">Los datos del usuario a actualizar.</param>
         /// <param name="IdUsuario">El Id del usuario a actualizar.</param>
         /// <returns>El resultado de la operación.</returns>
-        public async Task<ActionResult> PutServicio([FromForm] UsuarioPostDTO usuarioPostDTO, string Nickname)
+        public async Task<ActionResult> PutServicio([FromForm] UsuarioPutDTO usuarioPutDTO, string Nickname)
         {
             var usuarioDB = await context.Usuario.FirstOrDefaultAsync(x => x.Nickname == Nickname);
 
@@ -220,7 +220,7 @@ namespace Icp.TiendaApi.Servicios
                 return NotFound(new { message = $"El usuario con el Nickname ${Nickname} no existe" });
             }
 
-            usuarioDB = mapper.Map(usuarioPostDTO, usuarioDB);
+            usuarioDB = mapper.Map(usuarioPutDTO, usuarioDB);
 
             context.Update(usuarioDB);
 

@@ -99,16 +99,22 @@ namespace Icp.TiendaApi.Servicios
                 var articuloDB = await context.Articulo
                     .FirstOrDefaultAsync(x => x.IdArticulo == productoDTO.ArticuloId);
 
-                if (productoDTO.Cantidad > estanteriaDB.Cantidad)
-                {
-                    estado = "Pendiente de stock";
-                }
-                else if (productoDTO.Cantidad > estanteriaDB.Cantidad && articuloDB.EstadoArticulo == "Pendiente de eliminar")
+                if (productoDTO.Cantidad > estanteriaDB.Cantidad && articuloDB.EstadoArticulo == "Pendiente de eliminar")
                 {
                     return BadRequest(new { message = "Uno de los productos enviados no tiene suficiente cantidad y está pendiente de eliminar por lo que no se va a reponer, intente de nuevo con menos cantidad" });
-                }
 
-                estanteriaDB.Cantidad -= pedidoProducto.Cantidad;
+                }
+                else
+                {
+                    if (productoDTO.Cantidad > estanteriaDB.Cantidad)
+                    {
+                        estado = "Pendiente de stock";
+                    }
+                    else
+                    {
+                        estanteriaDB.Cantidad -= pedidoProducto.Cantidad;
+                    }
+                }
             }
 
             pedidoDB.EstadoPedido = estado;
@@ -127,6 +133,7 @@ namespace Icp.TiendaApi.Servicios
 
                 if (articuloDB.EstadoArticulo == "Pendiente de eliminar" && estanteriaDB.Cantidad == 0)
                 {
+                    estanteriaDB.ArticuloAlmacen = null;
                     articuloDB.EstadoArticulo = "Eliminado";
 
                     await context.SaveChangesAsync();

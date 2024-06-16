@@ -35,7 +35,7 @@ namespace Icp.TiendaApi.Servicios
 
             if(articulosDB.Count() == 0)
             {
-                return NotFound(new { message = "No hay articulos"});
+                return NotFound(new { message = "No hay articulos registrados"});
             }
 
             return mapper.Map<List<ArticuloAlmacenDTO>>(articulosDB);
@@ -152,7 +152,9 @@ namespace Icp.TiendaApi.Servicios
             }
 
             articuloDB.EstadoArticulo = "Disponible";
+
             context.Add(articuloDB);
+
             await context.SaveChangesAsync();
 
             var estanteriaDB = await context.Almacen.FirstOrDefaultAsync(x => x.IdEstanteria == almacenDTO.IdEstanteria);
@@ -178,7 +180,7 @@ namespace Icp.TiendaApi.Servicios
         /// <param name="articlePutDTO"></param>
         /// <param name="Nombre"></param>
         /// <returns></returns>
-        public async Task<ActionResult> PutServicio([FromForm] ArticuloPutDTO articlePutDTO, string Nombre)
+        public async Task<ActionResult> PutServicio([FromForm] ArticuloPutDTO articlePutDTO, [FromForm] AlmacenDTO? almacenDTO, string Nombre)
         {
             var articuloDB = await context.Articulo.FirstOrDefaultAsync(x => x.Nombre == Nombre);
 
@@ -211,9 +213,23 @@ namespace Icp.TiendaApi.Servicios
                 articuloDB.Foto = null;
             }
 
+            if (almacenDTO.Cantidad != 0 && almacenDTO.IdEstanteria != 0)
+            {
+                var estanteriaDB = await context.Almacen.FirstOrDefaultAsync(x => x.IdEstanteria == almacenDTO.IdEstanteria);
+
+                if (estanteriaDB == null)
+                {
+                    return NotFound(new { message = $"La estanteria con el id {almacenDTO.IdEstanteria} no existe" });
+                }
+
+                estanteriaDB.ArticuloAlmacen = articuloDB.IdArticulo;
+
+                estanteriaDB.Cantidad = almacenDTO.Cantidad;
+            }
+
             await context.SaveChangesAsync();
 
-            return Ok();
+            return Ok(new { message = "Artículo actualizado correctamente" });
         }
 
         /// <summary>
