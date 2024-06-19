@@ -78,16 +78,22 @@ namespace Icp.TiendaApi
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseStaticFiles();
+
             app.UseHttpsRedirection();
+
             app.UseRouting();
+
             app.UseCors("AllowSpecificOrigin");
+
             app.UseAuthentication();
+
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
+
         }
     }
 }

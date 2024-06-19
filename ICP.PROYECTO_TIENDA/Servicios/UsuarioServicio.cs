@@ -8,7 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-
+using BCrypt.Net;
 
 namespace Icp.TiendaApi.Servicios
 {
@@ -32,17 +32,16 @@ namespace Icp.TiendaApi.Servicios
         /// <returns>La respuesta de autenticación del usuario.</returns>
         public async Task<ActionResult<UsuarioRespuestaAutenticacionDTO>> LoginServicio(UsuarioCredencialesDTO usuarioCredencialesDTO)
         {
-            var existeEmail = await context.Usuario.FirstOrDefaultAsync(x => x.Email == usuarioCredencialesDTO.Email);
+            var usuarioDB = await context.Usuario.FirstOrDefaultAsync(x => x.Email == usuarioCredencialesDTO.Email);
 
-            if (existeEmail == null)
+            if (usuarioDB == null)
             {
                 return BadRequest(new { message = $"No existe un usuario con el email {usuarioCredencialesDTO.Email}" });
             }
 
-            var usuarioDB = await context.Usuario.FirstOrDefaultAsync(x => x.Email == usuarioCredencialesDTO.Email
-            && x.Password == usuarioCredencialesDTO.Password);
+            bool isPasswordValid = BCrypt.Net.BCrypt.Verify(usuarioCredencialesDTO.Password, usuarioDB.Password);
 
-            if (usuarioDB == null)
+            if (!isPasswordValid)
             {
                 return BadRequest(new { mesaage = "Login incorrecto, el email no coincide con la contraseña puesta o la contraseña es incorrecta" });
             }
@@ -197,6 +196,8 @@ namespace Icp.TiendaApi.Servicios
             var usuarioDB = mapper.Map<Usuario>(usuarioPostDTO);
 
             usuarioDB.EstadoUsuario = "Disponible";
+
+            usuarioDB.Password = BCrypt.Net.BCrypt.HashPassword(usuarioPostDTO.Password);
 
             context.Add(usuarioDB);
 
